@@ -1,0 +1,61 @@
+# MK750 HID descriptors (macOS, wired USB)
+
+Device: `ROYUAN` / `Gaming Keyboard`, VID `0x3151`, PID `0x4015`,
+bcdDevice `0x0107`, USB interface layout seen by `ioreg` / `hidapi`.
+
+## Interfaces
+
+| Interface | Primary usage page | Primary usage | Max input | Max output | Max feature | Purpose |
+|---|---|---|---|---|---|---|
+| 0 | `0x0001` | `0x06` | 8 | 1 | 0 | boot keyboard |
+| 1 | `0x000C` | `0x01` | 16 | 1 | 1 | consumer + system + NKRO + mouse + vendor input |
+| 2 | `0xFFFF` | `0x02` | 0 | 0 | 64 | vendor feature channel |
+
+## Report descriptors
+
+Interface 0 (boot keyboard):
+
+```
+05 01 09 06 a1 01 05 08 15 00 25 01 19 01 29 05 75 01 95 05 91 02 95 03 91 01
+05 07 19 e0 29 e7 75 01 95 08 81 02 95 08 81 01 15 00 26 ff 00 19 00 2a ff 00
+75 08 95 06 81 00 c0
+```
+
+Interface 1 (consumer, system, NKRO keyboard, mouse, vendor input):
+
+```
+05 0c 09 01 a1 01 85 03 19 00 2a 3c 03 15 00 26 3c 03 95 01 75 10 81 00 c0
+05 01 09 80 a1 01 85 02 05 01 19 81 29 83 15 00 25 01 95 03 75 01 81 02 95 01
+75 05 81 01 c0
+05 01 09 06 a1 01 85 01 05 07 15 00 25 01 19 00 29 77 95 78 75 01 81 02 c0
+05 01 09 02 a1 01 85 06 09 01 a1 00 05 09 15 00 25 01 19 01 29 05 75 01 95 05
+81 02 95 03 81 01 05 01 16 01 80 26 ff 7f 09 30 09 31 75 10 95 02 81 06 15 81
+25 7f 09 38 75 08 95 01 81 06 05 0c 0a 38 02 95 01 81 06 c0 c0
+06 ff ff 09 01 a1 01 85 05 09 01 15 00 26 ff 00 75 08 95 03 81 02 c0
+```
+
+Interface 2 (vendor feature channel):
+
+```
+06 ff ff 09 02 a1 01 09 02 15 80 25 7f 95 40 75 08 b1 02 c0
+```
+
+Decoded: usage page `0xFFFF`, usage `2`, application collection, usage `2`,
+logical minimum -128, logical maximum 127, report count 64, report size 8,
+Feature (64 bytes). No Report ID item: report ID is 0.
+
+## `hidapi` enumeration (macOS)
+
+```
+{'path': b'DevSrvsID:4294971940', 'usage_page': 1, 'usage': 6, 'interface_number': 0, 'manufacturer_string': 'ROYUAN', 'product_string': 'Gaming Keyboard', 'release_number': 263}
+{'path': b'DevSrvsID:4294971938', 'usage_page': 12, 'usage': 1, 'interface_number': 1, ...}
+{'path': b'DevSrvsID:4294971938', 'usage_page': 1, 'usage': 128, 'interface_number': 1, ...}
+{'path': b'DevSrvsID:4294971938', 'usage_page': 1, 'usage': 6, 'interface_number': 1, ...}
+{'path': b'DevSrvsID:4294971938', 'usage_page': 1, 'usage': 2, 'interface_number': 1, ...}
+{'path': b'DevSrvsID:4294971938', 'usage_page': 1, 'usage': 1, 'interface_number': 1, ...}
+{'path': b'DevSrvsID:4294971938', 'usage_page': 65535, 'usage': 1, 'interface_number': 1, ...}
+{'path': b'DevSrvsID:4294971932', 'usage_page': 65535, 'usage': 2, 'interface_number': 2, ...}
+```
+
+Select the entry with `usage_page == 0xFFFF`, `usage == 2`, `interface_number == 2`.
+Paths are per-boot and must not be hard-coded.
