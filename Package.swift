@@ -6,7 +6,8 @@ let package = Package(
   platforms: [.macOS(.v14)],
   products: [.library(name: "MK750Kit", targets: ["MK750Kit"])],
   targets: [
-    .target(name: "MK750Kit", linkerSettings: [.linkedFramework("IOKit")])
+    .target(name: "MK750Kit", linkerSettings: [.linkedFramework("IOKit")]),
+    .testTarget(name: "MK750KitTests", dependencies: ["MK750Kit"])
   ],
   swiftLanguageModes: [.v5]
 )
