@@ -58,6 +58,7 @@ was sent to this unit; treat those rows as reference-only.
 | [06-safety-and-troubleshooting.md](06-safety-and-troubleshooting.md) | Destructive opcodes, backup discipline, failure symptoms |
 | [07-verification.md](07-verification.md) | Exact probe bytes and how to reproduce them |
 | [08-command-reference.md](08-command-reference.md) | Opcode table with byte layouts and evidence markers |
+| [09-macos-app.md](09-macos-app.md) | Native macOS app, menu bar controls, build commands, and safety |
 | [examples/mk750ctl.py](examples/mk750ctl.py) | Runnable CLI for the safe operations |
 
 Data artifacts under [`data/`](data/):
