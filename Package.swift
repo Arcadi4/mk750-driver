@@ -27,7 +27,7 @@ let package = Package(
     ),
     .testTarget(
       name: "MK750KitTests",
-      dependencies: ["MK750Kit"]
+      dependencies: ["MK750Kit", "MK750"]
     ),
   ],
   // Swift 6 tools, Swift 5 language mode: IOKit's C API and its pointer

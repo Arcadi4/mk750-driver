@@ -36,7 +36,7 @@ public actor Keyboard {
   private var transport: (any MK750Transport)?
   private var identity: DeviceIdentity?
   private var trusted = false
-  private var mostRecentBackup: URL?
+  package private(set) var mostRecentBackup: URL?
 
   // MARK: - Initializers
 

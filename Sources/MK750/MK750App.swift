@@ -85,11 +85,12 @@ struct MK750App: App {
     Window("MK750", id: "control") {
       ControlWindowView(store: .shared)
     }
-    .defaultSize(width: 980, height: 680)
+    .defaultSize(width: 1020, height: 720)
     .windowResizability(.contentMinSize)
     .defaultLaunchBehavior(.presented)
     .restorationBehavior(.disabled)
     .commands {
+      SidebarCommands()
       ControlCommands(store: .shared)
     }
 
@@ -106,7 +107,7 @@ struct MK750App: App {
 // MARK: - Commands
 
 private struct ControlCommands: Commands {
-  let store: KeyboardStore
+  @ObservedObject var store: KeyboardStore
   @Environment(\.openWindow) private var openWindow
 
   var body: some Commands {
@@ -129,16 +130,8 @@ private struct ControlCommands: Commands {
 
       Divider()
 
-      Button("Refresh") {
-        Task {
-          if store.connection == .disconnected {
-            await store.connect()
-          } else {
-            await store.refresh()
-          }
-        }
-      }
-      .keyboardShortcut("r", modifiers: .command)
+      KeyboardConnectionButton(store: store)
+        .keyboardShortcut("r", modifiers: .command)
     }
 
     CommandGroup(replacing: .appTermination) {
@@ -163,10 +156,6 @@ private struct ControlCommands: Commands {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
   private var isTerminating = false
-
-  func applicationDidFinishLaunching(_ notification: Notification) {
-    _ = NSApp.setActivationPolicy(.accessory)
-  }
 
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
     false
@@ -194,28 +183,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 struct ControlWindowView: View {
   @ObservedObject var store: KeyboardStore
+  @StateObject private var macroDraft = MacroDraftModel()
 
-  private var sectionBinding: Binding<AppSection> {
-    Binding(
-      get: { store.section },
-      set: { store.section = $0 }
-    )
-  }
+  @State private var showConnectionDetails = false
 
-  private var connectionSummary: String {
-    switch store.connection {
-    case .connected: "Connected · USB"
-    case .connecting: "Connecting"
-    case .disconnected: "Disconnected"
-    }
-  }
-
-  private var connectionColor: Color {
-    switch store.connection {
-    case .connected: .green
-    case .connecting: .orange
-    case .disconnected: .secondary
-    }
+  private var sectionBinding: Binding<AppSection?> {
+    Binding(get: { store.section }, set: { if let section = $0 { store.section = section } })
   }
 
   private var visibleNotice: Notice? {
@@ -226,83 +199,79 @@ struct ControlWindowView: View {
     return notice
   }
 
-  private var refreshTitle: String {
-    store.connection == .disconnected ? "Reconnect keyboard" : "Refresh keyboard state"
+  private var sidebar: some View {
+    List(selection: sectionBinding) {
+      Section("Workspace") {
+        ForEach(AppSection.allCases) { section in
+          Label(section.title, systemImage: section.systemImage).tag(section)
+        }
+      }
+    }
+    .listStyle(.sidebar)
+    .safeAreaInset(edge: .bottom, alignment: .leading) {
+      VStack(alignment: .leading, spacing: 5) {
+        Label("FL ESPORTS MK750", systemImage: "keyboard")
+          .font(.subheadline.weight(.semibold))
+        HStack(spacing: 5) {
+          Image(systemName: store.connection.symbol)
+          Text(store.isUpdatingKeyboard ? "Updating keyboard…" :
+            store.connection == .connected ? "Connected · USB" : store.connection.title)
+          if store.connectionError != nil {
+            Button { showConnectionDetails.toggle() } label: {
+              Image(systemName: "info.circle")
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Connection details")
+            .popover(isPresented: $showConnectionDetails) {
+              if let error = store.connectionError {
+                Text(error).textSelection(.enabled).padding().frame(width: 280)
+              }
+            }
+          }
+        }
+        .foregroundStyle(.secondary)
+        .font(.caption)
+      }
+      .padding(.horizontal, 16)
+      .padding(.bottom, 14)
+    }
+    .navigationTitle("MK750")
+    .navigationSplitViewColumnWidth(min: 168, ideal: 188, max: 248)
   }
 
   var body: some View {
-    VStack(spacing: 0) {
-      if store.hasPendingFocusRestore {
-        pendingRestoreRow
-      }
-
-      if let notice = visibleNotice {
-        NoticeBanner(store: store, notice: notice)
-      }
-
-      if let busy = store.busy {
-        HStack(spacing: 8) {
-          ProgressView()
-            .progressViewStyle(.linear)
-          Text(busy)
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-          Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
-      }
-
-      sectionContent
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    .frame(minWidth: 760, minHeight: 520)
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        Picker("Section", selection: sectionBinding) {
-          ForEach(AppSection.allCases) { section in
-            Text(section.title)
-              .tag(section)
+    NavigationSplitView {
+      sidebar
+    } detail: {
+      VStack(spacing: 0) {
+        if store.hasPendingFocusRestore { pendingRestoreRow }
+        if let notice = visibleNotice { NoticeBanner(store: store, notice: notice) }
+        if let busy = store.busy {
+          HStack(spacing: 8) {
+            ProgressView().controlSize(.small)
+            Text(busy).foregroundStyle(.secondary)
+            Spacer()
           }
+          .padding(.horizontal, 20)
+          .padding(.vertical, 6)
         }
-        .pickerStyle(.segmented)
-        .labelsHidden()
-        .accessibilityLabel("Section")
+        sectionContent.frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-
-      ToolbarItem(placement: .primaryAction) {
-        HStack(spacing: 5) {
-          Image(systemName: store.connection.symbol)
-            .foregroundStyle(connectionColor)
-          Text(connectionSummary)
-            .foregroundStyle(.secondary)
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Keyboard \(connectionSummary)")
-      }
-
-      ToolbarItem(placement: .primaryAction) {
-        if store.connection == .connecting {
-          ProgressView()
-        } else {
-          Button {
-            Task {
-              if store.connection == .disconnected {
-                await store.connect()
-              } else {
-                await store.refresh()
-              }
-            }
-          } label: {
-            Image(systemName: "arrow.clockwise")
+      .frame(minWidth: 620, minHeight: 500)
+      .navigationTitle(store.section.title)
+      .toolbar {
+        ToolbarItem(placement: .primaryAction) {
+          if store.connection == .connected || store.section != .lighting {
+            KeyboardConnectionButton(store: store)
           }
-          .disabled(store.isBusy)
-          .help("\(refreshTitle) (⌘R)")
-          .accessibilityLabel(refreshTitle)
         }
       }
     }
+    .navigationSplitViewStyle(.balanced)
+    // Use normal Mac menus and Dock switching while the workspace is open.
+    // Closing it leaves quick controls in the menu bar.
+    .onAppear { NSApp.setActivationPolicy(.regular) }
+    .onDisappear { NSApp.setActivationPolicy(.accessory) }
   }
 
   @ViewBuilder
@@ -313,7 +282,7 @@ struct ControlWindowView: View {
     case .keymap:
       KeymapView(store: store)
     case .macros:
-      MacrosView(store: store)
+      MacrosView(store: store, draft: macroDraft)
     case .device:
       DeviceView(store: store)
     }
@@ -442,15 +411,14 @@ struct MenuBarPanel: View {
   @Environment(\.openWindow) private var openWindow
   @Environment(\.dismiss) private var dismiss
 
-  @State private var brightness: Double = 0
-
-  private var brightnessValue: UInt8 {
-    UInt8(brightness.rounded())
-  }
-
-  private var brightnessChanged: Bool {
-    guard let main = store.snapshot?.main else { return false }
-    return brightnessValue != main.brightness
+  private var brightness: Binding<Double> {
+    Binding {
+      Double(store.liveLight(for: .main)?.brightness ?? 0)
+    } set: { value in
+      guard var main = store.liveLight(for: .main) else { return }
+      main.brightness = UInt8(value.rounded())
+      store.updateLight(main, channel: .main)
+    }
   }
 
   private var lightingLocked: Bool {
@@ -460,10 +428,24 @@ struct MenuBarPanel: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       header
-      sceneGrid
-      Divider()
-      brightnessControl
-      focusControl
+      if store.snapshot != nil {
+        brightnessControl
+        Divider()
+        Text("Scenes").font(.headline)
+        sceneGrid
+        focusControl
+      } else {
+        Text("Connect the MK750 in wired USB mode to use quick controls.")
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+        KeyboardConnectionButton(store: store)
+        if let error = store.connectionError {
+          DisclosureGroup("Connection details") {
+            Text(error).font(.caption).textSelection(.enabled)
+          }
+        }
+        if store.focus != nil { focusControl }
+      }
       failureRow
       if let busy = store.busy {
         HStack(spacing: 6) {
@@ -480,10 +462,6 @@ struct MenuBarPanel: View {
     }
     .padding(14)
     .frame(width: 320)
-    .onAppear(perform: syncBrightness)
-    .onChange(of: store.snapshotRevision) { _, _ in
-      syncBrightness()
-    }
   }
 
   private var header: some View {
@@ -518,26 +496,21 @@ struct MenuBarPanel: View {
     }
   }
 
-  private var sceneGrid: some View {
-    ScrollView {
-      LazyVGrid(
-        columns: [
-          GridItem(.flexible(), spacing: 8),
-          GridItem(.flexible(), spacing: 8),
-        ],
-        spacing: 8
-      ) {
-        ForEach(store.quickScenes) { scene in
-          sceneButton(scene)
-        }
-      }
-      .padding(.vertical, 1)
+  @ViewBuilder private var sceneGrid: some View {
+    let scenes = store.quickScenes
+    let grid = LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 6) {
+      ForEach(scenes) { scene in sceneButton(scene) }
     }
-    .frame(height: 96)
+    if scenes.count <= 4 {
+      grid
+    } else {
+      ScrollView { grid.padding(.vertical, 2) }.frame(height: 108)
+    }
   }
 
   private func sceneButton(_ scene: NamedScene) -> some View {
-    Button {
+    let current = store.snapshot?.main == scene.main && store.snapshot?.side == scene.side
+    return Button {
       Task { await store.applyScene(scene) }
     } label: {
       HStack(spacing: 6) {
@@ -555,16 +528,16 @@ struct MenuBarPanel: View {
           .font(.callout)
           .lineLimit(1)
         Spacer(minLength: 0)
+        if current {
+          Image(systemName: "checkmark").font(.caption.bold()).accessibilityHidden(true)
+        }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
     .disabled(lightingLocked)
-    .accessibilityLabel("Apply scene \(scene.name)")
-    .help(
-      lightingLocked
-        ? "Connect the keyboard and finish any focus session first."
-        : "Apply \(scene.name)"
-    )
+    .accessibilityLabel("Use \(scene.name)")
+    .accessibilityValue(current ? "Current scene" : "")
+    .help(store.focus != nil ? "Finish focus to change scenes." : "Use \(scene.name)")
   }
 
   private var brightnessControl: some View {
@@ -573,27 +546,18 @@ struct MenuBarPanel: View {
         .foregroundStyle(.secondary)
         .accessibilityHidden(true)
 
-      Slider(value: $brightness, in: 0...4, step: 1) {
+      Slider(value: brightness, in: 0...4, step: 1) {
         Text("Backlight brightness")
       }
       .labelsHidden()
       .accessibilityLabel("Backlight brightness")
-      .accessibilityValue("\(Int(brightness)) of 4")
-      .disabled(lightingLocked)
+      .accessibilityValue("\(Int(brightness.wrappedValue)) of 4")
+      .disabled(!store.acceptsLiveEdits || store.focus != nil)
 
-      Text("\(Int(brightness))/4")
+      Text("\(Int(brightness.wrappedValue))/4")
         .font(.caption.monospacedDigit())
         .foregroundStyle(.secondary)
         .frame(width: 28, alignment: .trailing)
-
-      if brightnessChanged {
-        Button("Apply") {
-          applyBrightness()
-        }
-        .disabled(lightingLocked)
-        .help("Write backlight brightness")
-        .accessibilityLabel("Apply backlight brightness")
-      }
     }
   }
 
@@ -694,17 +658,6 @@ struct MenuBarPanel: View {
       }
       .keyboardShortcut("q", modifiers: .command)
     }
-  }
-
-  private func syncBrightness() {
-    guard let main = store.snapshot?.main else { return }
-    brightness = Double(main.brightness)
-  }
-
-  private func applyBrightness() {
-    guard var state = store.snapshot?.main else { return }
-    state.brightness = brightnessValue
-    Task { await store.applyLight(state, channel: .main) }
   }
 
   private func perform(_ action: Notice.Action) {

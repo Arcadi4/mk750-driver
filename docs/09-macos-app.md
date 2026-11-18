@@ -51,17 +51,15 @@ not run it during a write.
 
 ## Window and navigation
 
-The menu bar item opens a standard SwiftUI **Window** with compact top navigation
-(**Lighting**, **Keymap**, **Macros**, **Device**; `⌘1`–`⌘4`) plus Refresh
-(`⌘R`). No sidebar. Each screen owns its scrolling under fixed toolbars and action
-bars, so there is no nested page scroll; closing the window leaves the menu item.
+The control window has a native, collapsible sidebar: **Lighting**, **Keymap**,
+**Macros**, and **Device** (`⌘1`–`⌘4`). The sidebar shows the wired connection
+state. `⌘R` reads the keyboard again or attempts a connection when offline.
+The MK750 menu offers the same navigation without the sidebar.
 
-Controls use macOS 27's default appearance and intrinsic sizes. Layout containers
-remain bounded for scrolling and window resizing.
-
-The menu bar extra is a quick widget: status, scene buttons, main brightness with
-explicit Apply, focus timer, Open Controls, Quit. Busy work is one short line;
-positive notices are suppressed while persistent failures stay compact.
+With the window open, MK750 has normal Mac menus and a Dock icon. Closing the
+window leaves quick controls in the menu bar. There you can adjust backlight
+brightness directly, choose a scene, start or finish focus, or reopen the window.
+Without a keyboard the panel offers connection help instead of disabled sliders.
 
 ## Lighting and scenes
 
@@ -69,9 +67,10 @@ Scenes come first: four built-ins plus saved custom scenes, each storing both
 channel states and applying with a read-back. Save via a small name sheet; delete
 with confirmation.
 
-Backlight and Side Light cards edit independently: colour, mode, brightness,
-speed, RGB hex, Apply/Revert. Controls stage values; only Apply writes. An advanced
-disclosure exposes flag/option bytes and preserves unknown current values.
+Backlight and Side Light controls are live. Change a colour, mode, brightness
+or speed and the app writes the settled value, then reads it back. The menu bar
+brightness slider and the window share the same state. Advanced controls expose
+the flag and option bytes and preserve unknown current values.
 Host-data modes such as USERPIC are not offered; unverified effects are labelled
 reference-only.
 
@@ -81,16 +80,16 @@ recovered after relaunch require explicit Restore; reconnect never changes light
 
 ## Keymap
 
-A full-height table with toolbar: profile picker (0–3), Read, search, **Show Raw**,
-import/export.
+Read one of the four profiles to see its base and Fn bindings. Search by slot,
+key name, or bytes, or filter by binding type to find macros or unassigned keys.
 
-- Default columns **Slot**, **Base**, **Fn**; Show Raw adds matrix position and raw
-  four-byte values.
+- Default columns are **Slot**, **Base**, and **Fn**. Turn on **Bytes** to see
+  matrix positions and the raw binding bytes.
 - Slots follow the scan matrix; physical placement is not published.
 - Profiles 0/1 are writable; 2/3 are read-only here. The table always describes the
   loaded profile, so changing the read picker cannot mislabel data.
-- Selecting a slot opens a compact editor for keyboard usage, consumer usage,
-  macro binding, special action, transparent, or validated raw bytes. Writes name
+- Select a slot to inspect both layers, then choose which binding to edit:
+  keyboard usage, consumer usage, macro, special action, transparent, or raw bytes. Writes name
   profile/layer/slot/result, back up both layers, and verify the layer.
 - Import/export uses validated JSON with device identity, profile, and both full
   layers. Import rejects wrong lengths, invalid profiles, and board mismatches.
@@ -101,30 +100,32 @@ Read slots 0–49 to load 256 bytes. **Steps** shows repeat count and compact ke
 mouse-button, and mouse-move rows (press/release, delay, dx/dy); **Raw** shows the
 hex blob. Unmodelled formats stay raw and are reported until overwritten.
 
-Footer shows the write budget and Save/Add controls. Only bytes 0–223 are
+The editor shows the write budget before saving. Only bytes 0–223 are
 writable: a 256-byte input is saved after backing up the current macro, then all
 256 read-back bytes are verified. Nonzero data in bytes 224–255 that differs from
 the read-back refuses the save instead of inventing a page; a zero-only tail
 preserves the existing unwritable bytes.
 
-The draft is pinned to its source slot: changing slot or receiving another slot's
-read invalidates it, so a pending save cannot hit the wrong slot.
+Unsaved macro work stays in the window when you switch sidebar sections.
+Choosing a different slot or rereading the slot asks before discarding changes.
+Only Save Macro writes the complete draft to its source slot.
 
 ## Device
 
-Grouped native form with a sticky **Apply Changes** / **Revert** bar; edits are
-staged and Apply is the only write action.
+Device controls take effect when edited. Changes target the individual register
+or option bit; selecting a profile reads its settings rather than copying the
+previous profile's settings onto it.
 
-- **General:** profile (0/1), debounce (1–10 ms), auto-OS.
+- **Everyday:** active profile (0/1), debounce (1–10 ms), automatic OS detection.
 - **Sleep Timers** (collapsed): four 16-bit seconds values.
-- **Options** (collapsed): Win lock, Mac mode, WASD swap, backlight off, side light
+- **Options:** Win lock, Mac mode, WASD swap, backlight off, side light
   off, keyboard mode; unmodelled bits preserved.
 - **Advanced** (collapsed): keyboard lock, with explicit confirmation because the
   keyboard's own keys stop responding until cleared or power-cycled.
 - **Diagnostics** (collapsed, read-only): Fn-matrix, power save, options byte,
   debounce read-back.
-- **Backups:** back up a keymap profile, open folder, reveal latest; path in a
-  disclosure.
+- **Backups:** back up a keymap profile, open the local folder, or reveal the latest
+  file in Finder. Previously saved backups remain accessible offline.
 
 Options are single-bit read-modify-write; changed registers are read back and
 unmodelled bits, Fn-matrix, and power save verified unchanged. After a failure,
@@ -133,9 +134,11 @@ reload before retrying: some settings may already be applied.
 ## Safety rules
 
 - Launch, reconnect, refresh, diagnose: read-only.
-- Every mutation is explicit; keymap/macro writes save raw state before the SET.
-- Writes are verified by read-back; failure clears connection trust instead of
-  replaying.
+- Direct manipulation writes only after a user edit. Rapid changes to one control
+  are combined. Writes run one at a time, even after you leave the screen.
+- Key assignments, macros and imports are complete, explicitly targeted writes.
+  Keymap and macro writes save raw state before the SET.
+- Failed verification stops pending edits. Reconnect does not replay them.
 - The macro limit is 224 bytes; nonzero tail data is never truncated.
 - Keyboard lock has its own confirmation.
 - Quit waits for in-flight work; repeated Quit stays deferred.
@@ -213,6 +216,8 @@ Local detail: [docs index](README.md),
 Apple documentation:
 
 - SwiftUI `Window`: <https://developer.apple.com/documentation/swiftui/window>
+- HIG — Sidebars: <https://developer.apple.com/design/human-interface-guidelines/sidebars>
+- HIG — Toolbars: <https://developer.apple.com/design/human-interface-guidelines/toolbars>
 - SwiftUI `MenuBarExtra`: <https://developer.apple.com/documentation/swiftui/menubarextra>
 - SwiftUI `Table`: <https://developer.apple.com/documentation/swiftui/table>
 - SwiftUI accessibility: <https://developer.apple.com/documentation/swiftui/accessibility>

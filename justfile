@@ -22,7 +22,7 @@ check: build test
 bundle:
     ./scripts/bundle.sh
 
-# Bundle, then open the app. The app lives in the menu bar (no Dock icon).
+# Bundle, then open the control window. Closing it leaves the menu bar controls available.
 run: bundle
     open dist/MK750.app
 

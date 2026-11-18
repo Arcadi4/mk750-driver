@@ -189,44 +189,6 @@ struct RGB: Equatable, Hashable {
 
 // MARK: - Lighting models
 
-struct LightDraft: Equatable {
-  var mode: UInt8 = 1
-  var speed: UInt8 = 0
-  var brightness: UInt8 = 2
-  var flags: UInt8 = 0x07
-  var rgb = RGB(red: 255, green: 176, blue: 96)
-
-  init(state: LightState) {
-    mode = state.mode
-    speed = state.speed
-    brightness = state.brightness
-    flags = state.flags
-    rgb = RGB(red: state.red, green: state.green, blue: state.blue)
-  }
-
-  var state: LightState {
-    LightState(
-      mode: mode,
-      speed: speed,
-      brightness: brightness,
-      flags: flags,
-      red: rgb.red,
-      green: rgb.green,
-      blue: rgb.blue
-    )
-  }
-
-  var lowFlag: UInt8 { flags & 0x0F }
-  var optionNibble: UInt8 { flags >> 4 }
-
-  mutating func setLowFlag(_ value: UInt8) {
-    flags = (flags & 0xF0) | (value & 0x0F)
-  }
-
-  mutating func setOptionNibble(_ value: UInt8) {
-    flags = (flags & 0x0F) | ((value & 0x0F) << 4)
-  }
-}
 
 struct LightingMode: Identifiable, Hashable {
   let id: UInt8
@@ -792,6 +754,7 @@ final class KeyboardStore: ObservableObject {
   @Published private(set) var snapshot: DeviceSnapshot?
   @Published private(set) var snapshotRevision = 0
   @Published private(set) var connection: ConnectionPhase = .disconnected
+  @Published private(set) var connectionError: String?
   @Published var section: AppSection = .lighting
   @Published private(set) var busy: String?
   @Published private(set) var isShuttingDown = false
@@ -806,6 +769,10 @@ final class KeyboardStore: ObservableObject {
   @Published private(set) var lastBackupURL: URL?
 
   private let keyboard: Keyboard
+  @Published private var pendingEdits: [LiveEdit] = []
+  @Published private var writingEdit: LiveEdit?
+  private var liveWriter: Task<Void, Never>?
+  private var settleTime = ContinuousClock.now
   private var focusTimer: Timer?
   private var deferredFocusRestore: Task<Void, Never>?
   /// True while `focus` came from FocusRecovery.json rather than from a timer
@@ -855,14 +822,14 @@ final class KeyboardStore: ObservableObject {
     ),
   ]
 
-  init(keyboard: Keyboard = Keyboard()) {
+  init(keyboard: Keyboard = Keyboard(), storageDirectory: URL? = nil) {
     self.keyboard = keyboard
     let fileManager = FileManager.default
     let base =
       fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
       ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent(
         "Library/Application Support")
-    supportDirectory = base.appendingPathComponent("MK750", isDirectory: true)
+    supportDirectory = storageDirectory ?? base.appendingPathComponent("MK750", isDirectory: true)
     scenesURL = supportDirectory.appendingPathComponent("Scenes.json")
     focusRecoveryURL = supportDirectory.appendingPathComponent("FocusRecovery.json")
     backupsURL = supportDirectory.appendingPathComponent("Backups", isDirectory: true)
@@ -878,7 +845,16 @@ final class KeyboardStore: ObservableObject {
 
   // MARK: Derived state
 
-  var isBusy: Bool { busy != nil || connection == .connecting || isShuttingDown }
+  var isUpdatingKeyboard: Bool { writingEdit != nil || !pendingEdits.isEmpty }
+
+  var isBusy: Bool { busy != nil || connection == .connecting || isShuttingDown || isUpdatingKeyboard }
+
+  var acceptsLiveEdits: Bool {
+    guard snapshot != nil, connection == .connected, busy == nil, !isShuttingDown else { return false }
+    // A profile change may load different values for every other control.
+    if case .profile = writingEdit { return false }
+    return !pendingEdits.contains { if case .profile = $0 { true } else { false } }
+  }
 
   var allScenes: [NamedScene] { Self.builtInScenes + customScenes }
 
@@ -904,8 +880,9 @@ final class KeyboardStore: ObservableObject {
   // MARK: Connection
 
   func connect() async {
-    guard !isShuttingDown, connection != .connecting else { return }
+    guard !isBusy else { return }
     connection = .connecting
+    connectionError = nil
 
     do {
       let fresh = try await keyboard.connect()
@@ -921,11 +898,7 @@ final class KeyboardStore: ObservableObject {
     } catch {
       snapshot = nil
       connection = .disconnected
-      notice = .failure(
-        "Could not connect to the MK750",
-        Self.describe(error) + " " + Self.connectionGuidance,
-        action: .reconnect
-      )
+      connectionError = Self.describe(error)
     }
   }
 
@@ -960,6 +933,7 @@ final class KeyboardStore: ObservableObject {
   }
 
   func disconnect() async {
+    guard !isBusy else { return }
     await keyboard.disconnect()
     snapshot = nil
     connection = .disconnected
@@ -968,44 +942,120 @@ final class KeyboardStore: ObservableObject {
       "Settings and keymap data already loaded stay available for review and export.")
   }
 
-  // MARK: Lighting
+  // MARK: Live controls
 
-  func applyLight(_ state: LightState, channel: LightChannel) async -> Bool {
-    guard focus == nil else {
-      notice = .warning(
-        "Focus lighting is protected",
-        "Finish or restore the focus session before changing lighting, so the saved states are not silently overwritten."
-      )
-      return false
-    }
-    guard snapshot != nil else {
-      notice = .warning("No keyboard connected", Self.connectionGuidance, action: .reconnect)
-      return false
-    }
-    guard !isBusy else {
-      notice = .warning(
-        "Another operation is running", "Wait for “\(busy ?? "the current task")” to finish.")
-      return false
+  private enum LiveEdit {
+    case light(LightChannel, LightState)
+    case profile(UInt8), debounce(UInt8), sleep(SleepTimers), autoOS(Bool), option(UInt8, Bool)
+
+    func replaces(_ other: Self) -> Bool {
+      switch (self, other) {
+      case let (.light(a, _), .light(b, _)): a == b
+      case let (.option(a, _), .option(b, _)): a == b
+      case (.profile, .profile), (.debounce, .debounce), (.sleep, .sleep), (.autoOS, .autoOS): true
+      default: false
+      }
     }
 
-    busy = "Applying \(channel.displayName.lowercased())"
-    defer { busy = nil }
-
-    do {
-      let fresh = try await keyboard.setLight(state, channel: channel)
-      setSnapshot(fresh)
-      connection = .connected
-      lastBackupURL = await keyboard.latestBackupURL()
-      notice = .success(
-        "\(channel.displayName) applied",
-        "The keyboard was read back after the write. Mode and flag names are reference-only; this unit verified fixed colour with flag 7."
-      )
-      return true
-    } catch {
-      await handleFailure(error, context: "Could not apply \(channel.displayName.lowercased())")
-      return false
+    func project(onto settings: inout DeviceSettings) {
+      switch self {
+      case .profile(let value): settings.profile = value
+      case .debounce(let value): settings.debounce = value
+      case .sleep(let value): settings.sleep = value
+      case .autoOS(let value): settings.autoOS = value
+      case .option(let mask, let on):
+        settings.options = on ? settings.options | mask : settings.options & ~mask
+      case .light: break
+      }
     }
   }
+
+  func liveLight(for channel: LightChannel) -> LightState? {
+    guard let snapshot else { return nil }
+    for case let .light(target, state) in pendingEdits.reversed() where target == channel {
+      return state
+    }
+    if case let .light(target, state) = writingEdit, target == channel { return state }
+    return channel.isMain ? snapshot.main : snapshot.side
+  }
+
+  var liveSettings: DeviceSettings? {
+    guard let snapshot else { return nil }
+    var settings = DeviceSettings(snapshot: snapshot)
+    writingEdit?.project(onto: &settings)
+    for edit in pendingEdits { edit.project(onto: &settings) }
+    return settings
+  }
+
+  func updateLight(_ state: LightState, channel: LightChannel) {
+    guard acceptsLiveEdits, focus == nil, state != liveLight(for: channel) else { return }
+    enqueue(.light(channel, state))
+  }
+
+  func updateSettings(_ settings: DeviceSettings, allowKeyboardLock: Bool = false) {
+    guard acceptsLiveEdits, let current = liveSettings, settings != current else { return }
+    if settings.profile != current.profile {
+      guard settings.profile <= 1, focus == nil else { return }
+      enqueue(.profile(settings.profile))
+      return
+    }
+    if settings.options & 128 != 0, current.options & 128 == 0, !allowKeyboardLock {
+      notice = .warning("Keyboard lock needs confirmation", "Use Keyboard Lock in Device to confirm.")
+      return
+    }
+    for bit in OptionBits.all where (current.options ^ settings.options) & bit.mask != 0 {
+      enqueue(.option(bit.mask, settings.options & bit.mask != 0))
+    }
+    if settings.debounce != current.debounce { enqueue(.debounce(settings.debounce)) }
+    if settings.sleep != current.sleep { enqueue(.sleep(settings.sleep)) }
+    if settings.autoOS != current.autoOS { enqueue(.autoOS(settings.autoOS)) }
+  }
+
+  private func enqueue(_ edit: LiveEdit) {
+    if let index = pendingEdits.firstIndex(where: edit.replaces) {
+      pendingEdits[index] = edit
+    } else {
+      pendingEdits.append(edit)
+    }
+    settleTime = .now.advanced(by: .milliseconds(180))
+    if liveWriter == nil { liveWriter = Task { await drainLiveEdits() } }
+  }
+
+  private func drainLiveEdits() async {
+    defer { writingEdit = nil; liveWriter = nil }
+    while !pendingEdits.isEmpty {
+      while !isShuttingDown && ContinuousClock.now < settleTime {
+        try? await Task.sleep(until: settleTime, clock: .continuous)
+      }
+      let edit = pendingEdits.removeFirst()
+      writingEdit = edit
+      do {
+        let fresh: DeviceSnapshot
+        switch edit {
+        case let .light(channel, state): fresh = try await keyboard.setLight(state, channel: channel)
+        case .profile(let value): fresh = try await keyboard.setProfile(value)
+        case .debounce(let value): fresh = try await keyboard.setDebounce(value)
+        case .sleep(let value): fresh = try await keyboard.setSleep(value)
+        case .autoOS(let value): fresh = try await keyboard.setAutoOS(value)
+        case let .option(mask, on): fresh = try await keyboard.setOption(mask: mask, enabled: on)
+        }
+        setSnapshot(fresh)
+        lastBackupURL = await keyboard.mostRecentBackup ?? lastBackupURL
+        writingEdit = nil
+      } catch {
+        // Stop admitting input while the verified state is unknown. Never
+        // replay the remainder after a partial write, recovery or reconnect.
+        busy = "Checking keyboard state"
+        pendingEdits.removeAll()
+        writingEdit = nil
+        await handleFailure(error, context: "Keyboard update stopped")
+        busy = nil
+        return
+      }
+    }
+  }
+
+  // MARK: Scenes
 
   func applyScene(_ scene: NamedScene) async -> Bool {
     guard focus == nil else {
@@ -1269,6 +1319,7 @@ final class KeyboardStore: ObservableObject {
     stopFocusTimer()
     deferredFocusRestore?.cancel()
     deferredFocusRestore = nil
+    await liveWriter?.value
 
     // A multi-step lighting or scene write suspends on the actor while the
     // MainActor stays reentrant. New operations are refused from here on
@@ -1670,87 +1721,6 @@ final class KeyboardStore: ObservableObject {
     }
   }
 
-  // MARK: Device settings
-
-  func applyDeviceSettings(_ draft: DeviceSettings, allowKeyboardLock: Bool) async -> Bool {
-    guard let original = snapshot else {
-      notice = .warning("No keyboard connected", Self.connectionGuidance, action: .reconnect)
-      return false
-    }
-    guard !isBusy else {
-      notice = .warning(
-        "Another operation is running", "Wait for “\(busy ?? "the current task")” to finish.")
-      return false
-    }
-    guard (1...10).contains(draft.debounce) else {
-      notice = .warning(
-        "Debounce out of range", "Debounce is measured in milliseconds and must be 1–10.")
-      return false
-    }
-    if draft.profile != original.profile, draft.profile > 1 {
-      notice = .warning("Read-only profile", "Only profiles 0 and 1 can be selected.")
-      return false
-    }
-    if draft.options & 128 != 0, original.options & 128 == 0, !allowKeyboardLock {
-      notice = .warning(
-        "Keyboard lock needs confirmation",
-        "Enabling keyboard lock disables the keyboard's own keys until it is unlocked. Nothing was written."
-      )
-      return false
-    }
-
-    busy = "Applying device settings"
-    defer { busy = nil }
-
-    do {
-      var current = original
-
-      if draft.profile != current.profile {
-        current = try await keyboard.setProfile(draft.profile)
-        setSnapshot(current)
-      }
-
-      let changedOptions = draft.options ^ current.options
-      for bit in [UInt8(1), 2, 8, 16, 32, 64, 128] where changedOptions & bit != 0 {
-        current = try await keyboard.setOption(mask: bit, enabled: draft.options & bit != 0)
-        setSnapshot(current)
-      }
-
-      if draft.debounce != current.debounce {
-        current = try await keyboard.setDebounce(draft.debounce)
-        setSnapshot(current)
-      }
-
-      if draft.sleep != current.sleep {
-        current = try await keyboard.setSleep(draft.sleep)
-        setSnapshot(current)
-      }
-
-      if draft.autoOS != current.autoOS {
-        current = try await keyboard.setAutoOS(draft.autoOS)
-        setSnapshot(current)
-      }
-
-      connection = .connected
-      lastBackupURL = await keyboard.latestBackupURL()
-      notice = .success(
-        "Device settings applied",
-        "Each changed register was written with read-modify-write and read back. Unmodelled option bits, the Fn matrix and power save were preserved."
-      )
-      return true
-    } catch {
-      await handleFailure(error, context: "Device settings could not be fully applied")
-      if var current = notice {
-        if current.kind == .failure {
-          current.message +=
-            " Some settings may have been applied; reload to see the current values."
-          notice = current
-        }
-      }
-      return false
-    }
-  }
-
   // MARK: Backups
 
   func backupKeymap(profile: UInt8) async -> Bool {
@@ -1790,10 +1760,13 @@ final class KeyboardStore: ObservableObject {
     NSWorkspace.shared.open(backupsURL)
   }
 
+  func refreshBackupListing() async {
+    lastBackupURL = await keyboard.latestBackupURL()
+  }
+
   func revealLatestBackup() async {
-    let latest = await keyboard.latestBackupURL()
-    lastBackupURL = latest
-    guard let latest else {
+    await refreshBackupListing()
+    guard let latest = lastBackupURL else {
       openBackupsFolder()
       return
     }
@@ -1923,10 +1896,12 @@ final class KeyboardStore: ObservableObject {
     do {
       let fresh = try await keyboard.refresh()
       setSnapshot(fresh)
+      connectionError = nil
       connection = .connected
     } catch {
       snapshot = nil
       connection = .disconnected
+      connectionError = Self.describe(error)
     }
   }
 

@@ -1,65 +1,84 @@
+import Foundation
 import MK750Kit
 import SwiftUI
 
 struct DeviceView: View {
   @ObservedObject var store: KeyboardStore
 
-  @State private var draft = DeviceSettings(
-    profile: 0,
-    debounce: 1,
-    sleep: SleepTimers(bluetooth: 120, wireless: 120, deepBluetooth: 600, deepWireless: 600),
-    autoOS: true,
-    options: 0
-  )
-  @State private var dirty = false
   @State private var backupProfile: UInt8 = 0
   @State private var showLockConfirmation = false
   @State private var showSleep = false
-  @State private var showOptions = false
+  @State private var showOptions = true
   @State private var showAdvanced = false
   @State private var showDiagnostics = false
-  @State private var showBackupPath = false
 
-  private var controlsDisabled: Bool {
-    store.snapshot == nil || store.isBusy
+  private var settingsDisabled: Bool {
+    !store.acceptsLiveEdits
   }
 
   private var unknownOptionBits: UInt8 {
-    draft.options & ~OptionBits.knownMask
+    (store.liveSettings?.options ?? 0) & ~OptionBits.knownMask
   }
 
   private var enabledOptionCount: Int {
-    OptionBits.all.filter { $0.mask != 128 && draft.options & $0.mask != 0 }.count
+    let options = store.liveSettings?.options ?? 0
+    return OptionBits.all.filter { $0.mask != 128 && options & $0.mask != 0 }.count
+  }
+
+  private var sleepSummary: String {
+    guard let sleep = store.liveSettings?.sleep else { return "—" }
+    return "\(sleep.bluetooth)/\(sleep.wireless) · \(sleep.deepBluetooth)/\(sleep.deepWireless) s"
+  }
+
+  /// Explains the lock request without claiming a state the keyboard has not
+  /// verified yet. `liveSettings` is the latest request; `snapshot` is the last
+  /// read-back.
+  private var lockStatus: (text: String, symbol: String)? {
+    guard let live = store.liveSettings, let snapshot = store.snapshot else { return nil }
+    let requested = live.options & 128 != 0
+    let verified = snapshot.options & 128 != 0
+
+    switch (requested, verified) {
+    case (true, false):
+      return ("Lock requested. Keys stop responding once the write is verified.", "lock.open")
+    case (true, true):
+      return ("Keyboard keys are locked.", "lock")
+    case (false, true):
+      return ("Unlock requested. Keys stay locked until the write is verified.", "lock")
+    case (false, false):
+      return nil
+    }
   }
 
   var body: some View {
-    VStack(spacing: 0) {
-      Form {
-        identitySection
-        generalSection
+    Form {
+      if store.snapshot == nil {
+        KeyboardConnectionCard(store: store)
+          .listRowInsets(EdgeInsets())
+          .listRowBackground(Color.clear)
+      } else {
+        statusSection
+      }
+
+      if store.liveSettings != nil {
+        everydaySection
         sleepSection
         optionsSection
         advancedSection
-        diagnosticsSection
-        backupsSection
       }
-      .formStyle(.grouped)
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-      Divider()
-      actionBar
-    }
-    .onAppear {
-      syncFromSnapshot(force: true)
-    }
-    .onChange(of: store.snapshotRevision) { _, _ in
-      if !dirty {
-        syncFromSnapshot(force: false)
+      backupsSection
+
+      if store.snapshot != nil {
+        diagnosticsSection
       }
     }
+    .formStyle(.grouped)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .task { await store.refreshBackupListing() }
     .alert("Lock the keyboard's keys?", isPresented: $showLockConfirmation) {
-      Button("Lock and Apply", role: .destructive) {
-        apply(allowKeyboardLock: true)
+      Button("Lock Keyboard", role: .destructive) {
+        confirmKeyboardLock()
       }
       Button("Cancel", role: .cancel) {}
     } message: {
@@ -71,39 +90,46 @@ struct DeviceView: View {
 
   // MARK: Sections
 
-  private var identitySection: some View {
+  private var statusSection: some View {
     Section {
       if let snapshot = store.snapshot {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
           Image(systemName: "keyboard")
             .font(.title3)
             .foregroundStyle(.secondary)
             .accessibilityHidden(true)
 
-          VStack(alignment: .leading, spacing: 2) {
-            Text("MK750")
-              .font(.headline)
-            Text("Firmware \(snapshot.firmware) · USB · Board \(snapshot.boardID)")
+          VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 8) {
+              Text("MK750")
+                .font(.headline)
+              Text("Connected")
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.secondary)
+            }
+            Text("Firmware \(snapshot.firmware) · Board \(snapshot.boardID)")
               .font(.callout)
               .foregroundStyle(.secondary)
               .monospacedDigit()
+            Text("Wired USB · every write is read back")
+              .font(.caption)
+              .foregroundStyle(.secondary)
           }
 
-          Spacer()
+          Spacer(minLength: 0)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
-          "MK750, firmware \(snapshot.firmware), wired USB, board \(snapshot.boardID)"
+          "MK750 connected, firmware \(snapshot.firmware), board \(snapshot.boardID)"
         )
-      } else {
-        Label("No keyboard connected", systemImage: "bolt.slash")
-          .foregroundStyle(.secondary)
       }
+    } header: {
+      Text("Keyboard")
     }
   }
 
-  private var generalSection: some View {
-    Section("General") {
+  private var everydaySection: some View {
+    Section {
       Picker("Active profile", selection: profileBinding) {
         Text("Profile 0").tag(UInt8(0))
         Text("Profile 1").tag(UInt8(1))
@@ -111,10 +137,25 @@ struct DeviceView: View {
           Text("Profile \(snapshot.profile) (read-only)").tag(snapshot.profile)
         }
       }
+      .disabled(store.focus != nil)
+      .help(
+        store.focus != nil
+          ? "Finish or restore the focus session before switching profiles; the profile may replace the lighting saved for focus."
+          : "Choose the keyboard's active profile"
+      )
+
+      if store.focus != nil {
+        Text(
+          "Profile switching is unavailable during a focus session; finish or restore focus first. Other settings remain available."
+        )
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
+      }
 
       LabeledContent("Debounce") {
         HStack(spacing: 6) {
-          Text("\(draft.debounce) ms")
+          Text("\(store.liveSettings?.debounce ?? 1) ms")
             .monospacedDigit()
           Stepper("Debounce", value: debounceValue, in: 1...10)
             .labelsHidden()
@@ -124,31 +165,54 @@ struct DeviceView: View {
 
       Toggle("Auto OS detection", isOn: autoOSBinding)
         .help("Detect the host operating system automatically")
+        .accessibilityHint("Uses the host operating system to choose the modifier layout")
+    } header: {
+      Text("Everyday")
+    } footer: {
+      Text(
+        "Changes are written as you make them and read back. The active profile selects the keyboard's keymap and lighting slot."
+      )
     }
-    .disabled(controlsDisabled)
+    .disabled(settingsDisabled)
   }
 
   private var sleepSection: some View {
     Section {
       DisclosureGroup(isExpanded: $showSleep) {
-        sleepRow("Bluetooth sleep", keyPath: \.bluetooth)
-        sleepRow("2.4 GHz sleep", keyPath: \.wireless)
-        sleepRow("Bluetooth deep sleep", keyPath: \.deepBluetooth)
-        sleepRow("2.4 GHz deep sleep", keyPath: \.deepWireless)
+        SleepTimerField(
+          title: "Bluetooth sleep",
+          value: store.liveSettings?.sleep.bluetooth ?? 0,
+          onCommit: { commitSleep($0, keyPath: \.bluetooth) }
+        )
+        SleepTimerField(
+          title: "2.4 GHz sleep",
+          value: store.liveSettings?.sleep.wireless ?? 0,
+          onCommit: { commitSleep($0, keyPath: \.wireless) }
+        )
+        SleepTimerField(
+          title: "Bluetooth deep sleep",
+          value: store.liveSettings?.sleep.deepBluetooth ?? 0,
+          onCommit: { commitSleep($0, keyPath: \.deepBluetooth) }
+        )
+        SleepTimerField(
+          title: "2.4 GHz deep sleep",
+          value: store.liveSettings?.sleep.deepWireless ?? 0,
+          onCommit: { commitSleep($0, keyPath: \.deepWireless) }
+        )
       } label: {
         HStack(spacing: 12) {
           Label("Sleep Timers", systemImage: "moon.zzz")
-          Spacer()
-          Text(
-            "\(draft.sleep.bluetooth) / \(draft.sleep.wireless) / \(draft.sleep.deepBluetooth) / \(draft.sleep.deepWireless) s"
-          )
-          .font(.callout)
-          .foregroundStyle(.secondary)
-          .monospacedDigit()
+          Spacer(minLength: 8)
+          Text(sleepSummary)
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .monospacedDigit()
+            .lineLimit(1)
+            .help("Bluetooth / 2.4 GHz sleep, then deep sleep, in seconds")
         }
       }
     }
-    .disabled(controlsDisabled)
+    .disabled(settingsDisabled)
   }
 
   private var optionsSection: some View {
@@ -175,7 +239,7 @@ struct DeviceView: View {
       } label: {
         HStack(spacing: 12) {
           Label("Options", systemImage: "slider.horizontal.3")
-          Spacer()
+          Spacer(minLength: 8)
           Text("\(enabledOptionCount) on")
             .font(.callout)
             .foregroundStyle(.secondary)
@@ -183,7 +247,7 @@ struct DeviceView: View {
         }
       }
     }
-    .disabled(controlsDisabled)
+    .disabled(settingsDisabled)
   }
 
   private var advancedSection: some View {
@@ -191,24 +255,22 @@ struct DeviceView: View {
       DisclosureGroup(isExpanded: $showAdvanced) {
         Toggle("Keyboard lock", isOn: optionBinding(128))
           .help(
-            "Locks the keyboard's own keys until cleared. Applying a newly enabled lock asks for confirmation."
+            "Locks the keyboard's own keys until cleared. Enabling the lock asks for confirmation before anything is written."
           )
           .accessibilityHint(
             "The keys stop responding until you unlock them here or reconnect power.")
 
-        if draft.options & 128 != 0 {
-          Label(
-            "Keyboard keys are locked.",
-            systemImage: "lock"
-          )
-          .font(.callout)
-          .foregroundStyle(.secondary)
+        if let lockStatus {
+          Label(lockStatus.text, systemImage: lockStatus.symbol)
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
         }
       } label: {
         Label("Advanced", systemImage: "gearshape.2")
       }
     }
-    .disabled(controlsDisabled)
+    .disabled(settingsDisabled)
   }
 
   private var diagnosticsSection: some View {
@@ -227,6 +289,12 @@ struct DeviceView: View {
             Text(String(format: "0x%02X", snapshot.options))
               .font(.body.monospaced())
           }
+          if snapshot.options & ~OptionBits.knownMask != 0 {
+            LabeledContent("Unmodelled bits") {
+              Text(String(format: "0x%02X", snapshot.options & ~OptionBits.knownMask))
+                .font(.body.monospaced())
+            }
+          }
           LabeledContent("Debounce read-back") {
             Text("\(snapshot.debounce) ms")
               .monospacedDigit()
@@ -236,191 +304,209 @@ struct DeviceView: View {
             .foregroundStyle(.secondary)
         }
       } label: {
-        Label("Diagnostics", systemImage: "stethoscope")
+        HStack(spacing: 12) {
+          Label("Diagnostics", systemImage: "stethoscope")
+          Spacer(minLength: 8)
+          Text("Read-only")
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        }
       }
     }
   }
 
   private var backupsSection: some View {
-    Section("Backups") {
-      HStack(spacing: 8) {
-        Picker("Backup profile", selection: $backupProfile) {
-          Text("Profile 0").tag(UInt8(0))
-          Text("Profile 1").tag(UInt8(1))
-        }
-        .labelsHidden()
-        .accessibilityLabel("Profile to back up")
+    Section {
+      Picker("Profile", selection: $backupProfile) {
+        Text("Profile 0").tag(UInt8(0))
+        Text("Profile 1").tag(UInt8(1))
+      }
 
-        Button("Back Up Keymap") {
+      HStack(spacing: 10) {
+        Button {
           Task { await store.backupKeymap(profile: backupProfile) }
+        } label: {
+          Label("Back Up Keymap", systemImage: "square.and.arrow.down")
         }
-        .disabled(controlsDisabled)
+        .disabled(store.snapshot == nil || store.isBusy)
+        .help(
+          store.snapshot == nil
+            ? "Connect the MK750 over wired USB to back up a profile."
+            : "Read profile \(backupProfile) and save a copy in the backups folder"
+        )
 
-        Spacer(minLength: 12)
+        Spacer(minLength: 8)
+      }
 
+      HStack(spacing: 10) {
         Button("Open Folder") {
           store.openBackupsFolder()
         }
+        .help("Show the backups folder in Finder")
 
         Button("Reveal Latest") {
           Task { await store.revealLatestBackup() }
         }
-        .disabled(store.isBusy)
+        .disabled(store.lastBackupURL == nil)
+        .help("Select the newest backup in Finder")
       }
 
-      DisclosureGroup(isExpanded: $showBackupPath) {
-        Text(store.backupsURL.path)
-          .font(.callout.monospaced())
-          .textSelection(.enabled)
-          .accessibilityLabel("Backup folder path")
-
-        if let latest = store.lastBackupURL {
-          Text("Latest: \(latest.lastPathComponent)")
-            .font(.callout)
-            .foregroundStyle(.secondary)
+      if let latest = store.lastBackupURL {
+        LabeledContent("Latest backup") {
+          Text(latest.lastPathComponent)
             .lineLimit(1)
             .truncationMode(.middle)
             .help(latest.path)
-        } else {
-          Text("No backup recorded yet.")
-            .font(.callout)
+        }
+      } else {
+        LabeledContent("Latest backup") {
+          Text("None yet")
             .foregroundStyle(.secondary)
         }
-      } label: {
-        Label("Backup Folder", systemImage: "folder")
       }
+
+      LabeledContent("Folder") {
+        Text(store.backupsURL.path)
+          .font(.caption.monospaced())
+          .lineLimit(1)
+          .truncationMode(.middle)
+          .textSelection(.enabled)
+          .help(store.backupsURL.path)
+      }
+    } header: {
+      Text("Backups")
+    } footer: {
+      Text("Backups are stored on this Mac and remain available without the keyboard.")
     }
-  }
-
-  private var actionBar: some View {
-    HStack(spacing: 10) {
-      if dirty {
-        Text("Unsaved changes")
-          .font(.callout)
-          .foregroundStyle(.secondary)
-      }
-
-      Spacer(minLength: 12)
-
-      Button("Revert") {
-        revert()
-      }
-      .disabled(!dirty || controlsDisabled)
-      .help("Discard staged changes and reload the current settings from the keyboard")
-
-      Button("Apply Changes") {
-        requestApply()
-      }
-      .disabled(controlsDisabled || !dirty)
-      .help("Write the staged settings and verify the read-back")
-    }
-    .padding(.horizontal, 20)
-    .padding(.vertical, 12)
-    .background(.bar)
   }
 
   // MARK: Bindings
 
   private var profileBinding: Binding<UInt8> {
     Binding(
-      get: { draft.profile },
+      get: { store.liveSettings?.profile ?? 0 },
       set: { value in
-        draft.profile = value
-        dirty = true
+        guard store.focus == nil else { return }
+        guard var settings = store.liveSettings, settings.profile != value else { return }
+        settings.profile = value
+        store.updateSettings(settings)
       }
     )
   }
 
   private var debounceValue: Binding<Int> {
     Binding(
-      get: { Int(draft.debounce) },
+      get: { Int(store.liveSettings?.debounce ?? 1) },
       set: { value in
-        draft.debounce = UInt8(min(10, max(1, value)))
-        dirty = true
+        let debounce = UInt8(min(10, max(1, value)))
+        guard var settings = store.liveSettings, settings.debounce != debounce else { return }
+        settings.debounce = debounce
+        store.updateSettings(settings)
       }
     )
   }
 
   private var autoOSBinding: Binding<Bool> {
     Binding(
-      get: { draft.autoOS },
+      get: { store.liveSettings?.autoOS ?? false },
       set: { value in
-        draft.autoOS = value
-        dirty = true
+        guard var settings = store.liveSettings, settings.autoOS != value else { return }
+        settings.autoOS = value
+        store.updateSettings(settings)
       }
     )
   }
 
-  private func sleepRow(_ title: String, keyPath: WritableKeyPath<SleepTimers, UInt16>) -> some View
-  {
-    LabeledContent(title) {
-      HStack(spacing: 6) {
-        TextField(
-          "Seconds",
-          value: Binding(
-            get: { Int(draft.sleep[keyPath: keyPath]) },
-            set: { value in
-              draft.sleep[keyPath: keyPath] = UInt16(clamping: max(0, min(65535, value)))
-              dirty = true
-            }
-          ), format: .number
-        )
-        .accessibilityLabel("\(title) in seconds")
-
-        Text("s")
-          .foregroundStyle(.secondary)
-      }
-    }
-  }
-
   private func optionBinding(_ mask: UInt8) -> Binding<Bool> {
     Binding(
-      get: { draft.options & mask != 0 },
+      get: { (store.liveSettings?.options ?? 0) & mask != 0 },
       set: { enabled in
-        if enabled {
-          draft.options |= mask
-        } else {
-          draft.options &= ~mask
-        }
-        dirty = true
+        setOption(mask, enabled: enabled)
       }
     )
   }
 
   // MARK: Actions
 
-  private func syncFromSnapshot(force: Bool) {
-    guard let snapshot = store.snapshot else { return }
-    guard force || !dirty else { return }
-    draft = DeviceSettings(snapshot: snapshot)
-    dirty = false
-  }
+  private func setOption(_ mask: UInt8, enabled: Bool) {
+    guard var settings = store.liveSettings else { return }
+    let current = settings.options & mask != 0
+    guard current != enabled else { return }
 
-  private func requestApply() {
-    guard let snapshot = store.snapshot else { return }
-    let isEnablingLock = draft.options & 128 != 0 && snapshot.options & 128 == 0
-    if isEnablingLock {
-      showLockConfirmation = true
-    } else {
-      apply(allowKeyboardLock: false)
+    if mask == 128 {
+      if enabled {
+        // Do not mutate the live settings here: the toggle must stay off until
+        // the explicit confirmation succeeds. Cancel leaves everything as is.
+        showLockConfirmation = true
+      } else {
+        settings.options &= ~mask
+        store.updateSettings(settings)
+      }
+      return
     }
+
+    if enabled {
+      settings.options |= mask
+    } else {
+      settings.options &= ~mask
+    }
+    store.updateSettings(settings)
   }
 
-  private func apply(allowKeyboardLock: Bool) {
-    let pendingDraft = draft
-    Task {
-      if await store.applyDeviceSettings(pendingDraft, allowKeyboardLock: allowKeyboardLock) {
-        dirty = false
-        syncFromSnapshot(force: true)
+  private func confirmKeyboardLock() {
+    guard var settings = store.liveSettings, settings.options & 128 == 0 else { return }
+    settings.options |= 128
+    store.updateSettings(settings, allowKeyboardLock: true)
+  }
+
+  private func commitSleep(_ seconds: UInt16, keyPath: WritableKeyPath<SleepTimers, UInt16>) {
+    guard var settings = store.liveSettings, settings.sleep[keyPath: keyPath] != seconds else {
+      return
+    }
+    settings.sleep[keyPath: keyPath] = seconds
+    store.updateSettings(settings)
+  }
+}
+
+// MARK: - Sleep timer text entry
+
+/// Keeps the in-progress text local so a partial or invalid number is never
+/// written. A valid value is committed on Return or when focus leaves; an
+/// invalid value is replaced by the last live value instead.
+private struct SleepTimerField: View {
+  let title: String
+  let value: UInt16
+  let onCommit: (UInt16) -> Void
+
+  @State private var entry: String?
+  @FocusState private var isFocused: Bool
+
+  var body: some View {
+    LabeledContent(title) {
+      HStack(spacing: 6) {
+        TextField("Seconds", text: Binding(get: { entry ?? String(value) }, set: { entry = $0 }))
+          .frame(width: 84)
+          .multilineTextAlignment(.trailing)
+          .focused($isFocused)
+          .onSubmit(commitOrRestore)
+          .accessibilityLabel("\(title) in seconds")
+
+        Text("s")
+          .foregroundStyle(.secondary)
+      }
+    }
+    .onChange(of: isFocused) { _, focused in
+      if !focused {
+        commitOrRestore()
       }
     }
   }
 
-  private func revert() {
-    Task {
-      await store.refresh()
-      dirty = false
-      syncFromSnapshot(force: true)
+  private func commitOrRestore() {
+    guard let entry else { return }
+    self.entry = nil
+    if let seconds = UInt16(entry.trimmingCharacters(in: .whitespacesAndNewlines)), seconds != value {
+      onCommit(seconds)
     }
   }
 }
