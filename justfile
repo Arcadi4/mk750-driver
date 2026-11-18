@@ -20,7 +20,7 @@ check: build test
 
 # Build the release app bundle at dist/MK750.app.
 bundle:
-    ./scripts/bundle.sh
+    ./Scripts/bundle.sh
 
 # Bundle, then open the control window. Closing it leaves the menu bar controls available.
 run: bundle
