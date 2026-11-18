@@ -6,10 +6,10 @@ protocol family, wired USB).
 
 Verification legend:
 
-* **Verified on this unit** — the read was executed against the connected
+- **Verified on this unit** — the read was executed against the connected
   keyboard during recon; results are recorded in `docs/data/recon-findings.md`
   and `docs/data/keymap-profile0.{tsv,json}`.
-* **Reference-only (not tested on this unit)** — taken from the sharkfin
+- **Reference-only (not tested on this unit)** — taken from the sharkfin
   protocol reference. Nothing here writes to a keyboard without a prior
   successful readback and explicit operator intent.
 
@@ -56,8 +56,8 @@ def get_page(dev, opcode, b1, b2):
 
 ## Reading the keymap (verified on this unit)
 
-* Base layer: `0x89 [profile, page]` — request `89 profile page 00 00 00 00 ck`.
-* Fn layer: `0x90 [profile, page]` — request `90 profile page 00 00 00 00 ck`.
+- Base layer: `0x89 [profile, page]` — request `89 profile page 00 00 00 00 ck`.
+- Fn layer: `0x90 [profile, page]` — request `90 profile page 00 00 00 00 ck`.
 
 Pages are `0..7`. Each reply is a raw 64-byte page (no opcode echo). A layer
 holds 128 slots × 4 bytes = 512 bytes, split into eight 64-byte pages.
@@ -95,28 +95,28 @@ print(slot_value(base, 0).hex(" "))  # 00 00 29 00  -> Esc
 Bytes 1..3 are the three bytes after byte 0 (the type byte). All values below
 come from recon and the reference; observed values were read on this unit.
 
-| byte 0 | Meaning | Bytes 1..3 layout | Observed / reference values |
-|---|---|---|---|
-| `0x00` | HID keyboard usage | `[0, usage, 0]` — usage in byte 2 | e.g. `00 00 29 00` = Esc, `00 00 35 00` = Backquote, `00 00 e1 00` = LShift (verified) |
-| `0x01` | Mouse button | reference does not detail bytes 1..3 | not observed on this unit's keymap |
-| `0x03` | Consumer usage | `[0, lo, hi]` — 16-bit usage little-endian in bytes 2..3 | `03 00 70 00` BrightnessUp, `03 00 e9 00` VolumeUp, `03 00 b6 00` PrevTrack (verified). Reference example: Vol+ = `[3,0,0xE9,0]` |
-| `0x09` | Macro | `[mode, index, 0]` | mode `0` repeat, `1` toggle, `2` hold; `index` is the macro slot (reference; binding verified only as an encoding, not written on this unit) |
-| `0x0A` | Special | `[code, 0, 0]` | `1` = Fn (verified at base slot 65: `0a 01 00 00`), `8` observed (Fn+Backspace), `12` = power save (verified at Fn slot 85), `13` observed (Fn+Esc), `17` = Caps LED Swap (reference) |
-| `0x0D` | Extended Fn action | raw `[sub, a, b]` | observed `sub` 1, 2, 3, 5, 6; semantics not published — treat as raw |
-| `0x0E` | Wireless channel | raw `[a, b, 0]` in bytes 1..3 | observed `a=0,b=0..2` (BT 1..3) and `a=1,b=0` (2.4 GHz) |
-| all zero | Fn layer: fall through to base. Base layer: key is dead | — | reference; many Fn slots are `00 00 00 00` = Transparent (verified) |
+| byte 0   | Meaning                                                 | Bytes 1..3 layout                                        | Observed / reference values                                                                                                                                                           |
+| -------- | ------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0x00`   | HID keyboard usage                                      | `[0, usage, 0]` — usage in byte 2                        | e.g. `00 00 29 00` = Esc, `00 00 35 00` = Backquote, `00 00 e1 00` = LShift (verified)                                                                                                |
+| `0x01`   | Mouse button                                            | reference does not detail bytes 1..3                     | not observed on this unit's keymap                                                                                                                                                    |
+| `0x03`   | Consumer usage                                          | `[0, lo, hi]` — 16-bit usage little-endian in bytes 2..3 | `03 00 70 00` BrightnessUp, `03 00 e9 00` VolumeUp, `03 00 b6 00` PrevTrack (verified). Reference example: Vol+ = `[3,0,0xE9,0]`                                                      |
+| `0x09`   | Macro                                                   | `[mode, index, 0]`                                       | mode `0` repeat, `1` toggle, `2` hold; `index` is the macro slot (reference; binding verified only as an encoding, not written on this unit)                                          |
+| `0x0A`   | Special                                                 | `[code, 0, 0]`                                           | `1` = Fn (verified at base slot 65: `0a 01 00 00`), `8` observed (Fn+Backspace), `12` = power save (verified at Fn slot 85), `13` observed (Fn+Esc), `17` = Caps LED Swap (reference) |
+| `0x0D`   | Extended Fn action                                      | raw `[sub, a, b]`                                        | observed `sub` 1, 2, 3, 5, 6; semantics not published — treat as raw                                                                                                                  |
+| `0x0E`   | Wireless channel                                        | raw `[a, b, 0]` in bytes 1..3                            | observed `a=0,b=0..2` (BT 1..3) and `a=1,b=0` (2.4 GHz)                                                                                                                               |
+| all zero | Fn layer: fall through to base. Base layer: key is dead | —                                                        | reference; many Fn slots are `00 00 00 00` = Transparent (verified)                                                                                                                   |
 
 For `0x0A` code `1` (Fn), the reference notes that overwriting a slot holding
 Fn is permitted.
 
 ## Profile facts (verified on this unit)
 
-* Active profile is `0`; profile GET (`0x85`) returns `0` in `reply[1]`.
-* Profiles `0` and `1` have identical base **and** Fn layers.
-* All four profiles' base layers are identical.
-* Profile `2`'s Fn layer is all `FF` (erased).
-* Profile `3`'s Fn layer is random-looking uninitialized flash.
-* Only profiles `0` and `1` have usable Fn layers.
+- Active profile is `0`; profile GET (`0x85`) returns `0` in `reply[1]`.
+- Profiles `0` and `1` have identical base **and** Fn layers.
+- All four profiles' base layers are identical.
+- Profile `2`'s Fn layer is all `FF` (erased).
+- Profile `3`'s Fn layer is random-looking uninitialized flash.
+- Only profiles `0` and `1` have usable Fn layers.
 
 **Do not write profiles 2 or 3.** Their Fn storage is not a valid keymap.
 Confirm the family first (yc500 here, verified via `0x8F` identify and the
@@ -125,43 +125,43 @@ misaddressed write lands on a live register.
 
 ## This unit's keymap summary (verified on this unit)
 
-* Base layer: **86 populated slots** — 82 HID keyboard usages, three consumer
+- Base layer: **86 populated slots** — 82 HID keyboard usages, three consumer
   keys (Mute, VolumeUp, VolumeDown) and one special Fn key.
-* Fn F-row: F1/F2 = brightness up/down (consumer `0x70`/`0x6F`); F3/F4 =
+- Fn F-row: F1/F2 = brightness up/down (consumer `0x70`/`0x6F`); F3/F4 =
   ACBack/ACForward; F5/F6 pass through as F5/F6; F7/F8/F9 = PrevTrack /
   PlayPause / NextTrack; F10/F11/F12 = Mute / VolumeDown / VolumeUp.
-* Fn+1/2/3 (`0x0E` `a=0,b=0/1/2`) = Bluetooth channels 1–3; Fn+4
+- Fn+1/2/3 (`0x0E` `a=0,b=0/1/2`) = Bluetooth channels 1–3; Fn+4
   (`0x0E` `a=1,b=0`) = 2.4 GHz.
-* Fn+Z/X/C/V carry `0x0D sub=6` with `a = 0, 1, 2, 128`; Fn+Up/Down
+- Fn+Z/X/C/V carry `0x0D sub=6` with `a = 0, 1, 2, 128`; Fn+Up/Down
   `0x0D sub=2`, Fn+Left/Right `0x0D sub=3`, Fn+RShift `0x0D sub=5`,
   Fn+RCtrl and Fn+Delete `0x0D sub=1`. These are raw actions; the reference
   does not publish their semantics (the likely speed/brightness meaning is
   **inferred**, not verified).
-* Fn+Insert = special `12` (power save per reference); Fn+Esc = special `13`
+- Fn+Insert = special `12` (power save per reference); Fn+Esc = special `13`
   (observed, meaning not published); Fn+Backspace = special `8` (observed).
 
 Compact excerpt from the full decode (columns exactly as in the TSV):
 
-| slot | base bytes | base | fn bytes | fn |
-|---:|---|---|---|---|
-| 0 | `00 00 29 00` | Esc | `0a 0d 00 00` | SPECIAL(13) |
-| 7 | `00 00 1e 00` | 1 | `0e 00 00 00` | FN_0E(a=0,b=0) — BT 1 |
-| 12 | `00 00 3a 00` | F1 | `03 00 70 00` | BrightnessUp |
-| 13 | `00 00 1f 00` | 2 | `0e 00 01 00` | FN_0E(a=0,b=1) — BT 2 |
-| 19 | `00 00 20 00` | 3 | `0e 00 02 00` | FN_0E(a=0,b=2) — BT 3 |
-| 25 | `00 00 21 00` | 4 | `0e 01 00 00` | FN_0E(a=1,b=0) — 2.4 GHz |
-| 48 | `00 00 40 00` | F7 | `03 00 b6 00` | PrevTrack |
-| 65 | `0a 01 00 00` | SPECIAL(1) — Fn | `00 00 00 00` | Transparent |
-| 71 | `00 00 e4 00` | RCtrl | `0d 01 00 00` | FN_0D(sub=1,a=0,b=0) |
-| 77 | `00 00 50 00` | Left | `0d 03 01 00` | FN_0D(sub=3,a=1,b=0) |
-| 82 | `00 00 52 00` | Up | `0d 02 01 00` | FN_0D(sub=2,a=1,b=0) |
-| 85 | `00 00 49 00` | Insert | `0a 0c 00 00` | SPECIAL(12) — power save |
-| 90 | `03 00 e9 00` | VolumeUp | `00 00 00 00` | Transparent |
+| slot | base bytes    | base            | fn bytes      | fn                       |
+| ---: | ------------- | --------------- | ------------- | ------------------------ |
+|    0 | `00 00 29 00` | Esc             | `0a 0d 00 00` | SPECIAL(13)              |
+|    7 | `00 00 1e 00` | 1               | `0e 00 00 00` | FN_0E(a=0,b=0) — BT 1    |
+|   12 | `00 00 3a 00` | F1              | `03 00 70 00` | BrightnessUp             |
+|   13 | `00 00 1f 00` | 2               | `0e 00 01 00` | FN_0E(a=0,b=1) — BT 2    |
+|   19 | `00 00 20 00` | 3               | `0e 00 02 00` | FN_0E(a=0,b=2) — BT 3    |
+|   25 | `00 00 21 00` | 4               | `0e 01 00 00` | FN_0E(a=1,b=0) — 2.4 GHz |
+|   48 | `00 00 40 00` | F7              | `03 00 b6 00` | PrevTrack                |
+|   65 | `0a 01 00 00` | SPECIAL(1) — Fn | `00 00 00 00` | Transparent              |
+|   71 | `00 00 e4 00` | RCtrl           | `0d 01 00 00` | FN_0D(sub=1,a=0,b=0)     |
+|   77 | `00 00 50 00` | Left            | `0d 03 01 00` | FN_0D(sub=3,a=1,b=0)     |
+|   82 | `00 00 52 00` | Up              | `0d 02 01 00` | FN_0D(sub=2,a=1,b=0)     |
+|   85 | `00 00 49 00` | Insert          | `0a 0c 00 00` | SPECIAL(12) — power save |
+|   90 | `03 00 e9 00` | VolumeUp        | `00 00 00 00` | Transparent              |
 
 The complete decoded table (all slots) is in:
 
-* `docs/data/keymap-profile0.tsv` — human-readable rows.
-* `docs/data/keymap-profile0.json` — same data as JSON (`device`, `profile`,
+- `docs/data/keymap-profile0.tsv` — human-readable rows.
+- `docs/data/keymap-profile0.json` — same data as JSON (`device`, `profile`,
   `source`, `slots`).
 
 ## Matrix-order caveat
@@ -266,14 +266,14 @@ def read_macro(dev, slot):
 
 Write with `0x16` (yc500), Bit7, one report per 56-byte page:
 
-| byte | meaning |
-|---|---|
-| 0 | opcode `0x16` |
-| 1 | slot |
-| 2 | page |
-| 3 | `56` (payload length) |
-| 4 | `1` on the final page, else `0` |
-| 8.. | 56 payload bytes (zero-padded) |
+| byte | meaning                         |
+| ---- | ------------------------------- |
+| 0    | opcode `0x16`                   |
+| 1    | slot                            |
+| 2    | page                            |
+| 3    | `56` (payload length)           |
+| 4    | `1` on the final page, else `0` |
+| 8..  | 56 payload bytes (zero-padded)  |
 
 The vendor sends only the prefix of pages that contain a non-zero byte. Always
 read the slot back with `0x8B` after writing and confirm it matches before
@@ -281,14 +281,14 @@ considering the write successful.
 
 ### Macro blob format
 
-* `u16` little-endian repeat count, then a strictly alternating
+- `u16` little-endian repeat count, then a strictly alternating
   event / delay stream.
-* Key or mouse button event: `[code, pressed<<7 | delay]`, or
+- Key or mouse button event: `[code, pressed<<7 | delay]`, or
   `[code, pressed ? 0x80 : 0, delay u16 LE]` when the delay is 0 or greater
   than 127 ms.
-* Mouse move: `[0xF9, delay, dx i8, dy i8]`.
-* Mouse buttons: `0xF0`..`0xF4`. Key codes: HID usages `0x04`..`0xEF`.
-* Four zero bytes terminate the stream.
+- Mouse move: `[0xF9, delay, dx i8, dy i8]`.
+- Mouse buttons: `0xF0`..`0xF4`. Key codes: HID usages `0x04`..`0xEF`.
+- Four zero bytes terminate the stream.
 
 Bind a macro to a key with the keymap slot value `[0x09, mode, index, 0]`,
 where `mode` is `0` repeat, `1` toggle, `2` hold, and `index` is the macro
@@ -297,30 +297,30 @@ is documented in both recon and the reference.
 
 ## Verification status at a glance
 
-| Area | Status on this unit |
-|---|---|
-| Keymap read `0x89` / Fn read `0x90`, slot math, page layout | Verified (all profiles/pages probed) |
-| Slot encoding and observed `0x00/0x03/0x0A/0x0D/0x0E` values | Verified from read data |
-| Profile 0/1 identity, 2/3 invalid Fn, all base identical | Verified |
-| Full profile-0 decode (`keymap-profile0.{tsv,json}`) | Verified |
-| Macro read `0x8B` | Verified (slot 0 page 0 read) |
-| Keymap writes `0x13`/`0x15`, bulk `0x09`/`0x10` | Reference-only — not tested |
-| Macro write `0x16` and blob authoring | Reference-only — not tested |
-| Physical key ↔ slot mapping | Not published; any layout is inferred |
+| Area                                                         | Status on this unit                   |
+| ------------------------------------------------------------ | ------------------------------------- |
+| Keymap read `0x89` / Fn read `0x90`, slot math, page layout  | Verified (all profiles/pages probed)  |
+| Slot encoding and observed `0x00/0x03/0x0A/0x0D/0x0E` values | Verified from read data               |
+| Profile 0/1 identity, 2/3 invalid Fn, all base identical     | Verified                              |
+| Full profile-0 decode (`keymap-profile0.{tsv,json}`)         | Verified                              |
+| Macro read `0x8B`                                            | Verified (slot 0 page 0 read)         |
+| Keymap writes `0x13`/`0x15`, bulk `0x09`/`0x10`              | Reference-only — not tested           |
+| Macro write `0x16` and blob authoring                        | Reference-only — not tested           |
+| Physical key ↔ slot mapping                                  | Not published; any layout is inferred |
 
 ## Sources
 
-* Recon findings (verified source of truth for this unit):
+- Recon findings (verified source of truth for this unit):
   `docs/data/recon-findings.md` in this repository.
-* Full keymap decode: `docs/data/keymap-profile0.tsv` and
+- Full keymap decode: `docs/data/keymap-profile0.tsv` and
   `docs/data/keymap-profile0.json` in this repository.
-* sharkfin protocol, authoritative public reverse-engineering reference:
+- sharkfin protocol, authoritative public reverse-engineering reference:
   https://github.com/dniminenn/sharkfin/blob/master/docs/PROTOCOL.md
   (local copy read: `/tmp/sharkfin/docs/PROTOCOL.md` — Keymap, Slot values,
   Macros, Checksums, Families).
-* sharkfin board registry, row `腹灵 MK750 | 849 | 3151:4015 | unknown`:
+- sharkfin board registry, row `腹灵 MK750 | 849 | 3151:4015 | unknown`:
   https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md
   (local copy read: `/tmp/sharkfin/docs/BOARDS.md`).
-* FL Esports official software (vendor configurator):
+- FL Esports official software (vendor configurator):
   https://flesportsglobal.com/pages/software
-* `hidapi` Python bindings: https://pypi.org/project/hidapi/
+- `hidapi` Python bindings: https://pypi.org/project/hidapi/

@@ -1,2164 +1,1304 @@
 {
- "device": "FL Esports MK750 (ROYUAN 3151:4015, board id 849)",
- "profile": 0,
- "source": "read via GET 0x89 / 0x90, profile 0, pages 0..7",
- "slots": [
-  {
-   "slot": 0,
-   "base": {
-    "kind": "key",
-    "usage": "0x29",
-    "name": "Esc"
-   },
-   "base_bytes": [
-    0,
-    0,
-    41,
-    0
-   ],
-   "fn": {
-    "kind": "special",
-    "code": 13
-   },
-   "fn_bytes": [
-    10,
-    13,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 1,
-   "base": {
-    "kind": "key",
-    "usage": "0x35",
-    "name": "Backquote"
-   },
-   "base_bytes": [
-    0,
-    0,
-    53,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 2,
-   "base": {
-    "kind": "key",
-    "usage": "0x2B",
-    "name": "Tab"
-   },
-   "base_bytes": [
-    0,
-    0,
-    43,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 3,
-   "base": {
-    "kind": "key",
-    "usage": "0x39",
-    "name": "CapsLock"
-   },
-   "base_bytes": [
-    0,
-    0,
-    57,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 4,
-   "base": {
-    "kind": "key",
-    "usage": "0xE1",
-    "name": "LShift"
-   },
-   "base_bytes": [
-    0,
-    0,
-    225,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 5,
-   "base": {
-    "kind": "key",
-    "usage": "0xE0",
-    "name": "LCtrl"
-   },
-   "base_bytes": [
-    0,
-    0,
-    224,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 7,
-   "base": {
-    "kind": "key",
-    "usage": "0x1E",
-    "name": "1"
-   },
-   "base_bytes": [
-    0,
-    0,
-    30,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0e",
-    "a": 0,
-    "b": 0
-   },
-   "fn_bytes": [
-    14,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 8,
-   "base": {
-    "kind": "key",
-    "usage": "0x14",
-    "name": "Q"
-   },
-   "base_bytes": [
-    0,
-    0,
-    20,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 9,
-   "base": {
-    "kind": "key",
-    "usage": "0x04",
-    "name": "A"
-   },
-   "base_bytes": [
-    0,
-    0,
-    4,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 10,
-   "base": {
-    "kind": "key",
-    "usage": "0x64",
-    "name": "NonUSBackslash"
-   },
-   "base_bytes": [
-    0,
-    0,
-    100,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 12,
-   "base": {
-    "kind": "key",
-    "usage": "0x3A",
-    "name": "F1"
-   },
-   "base_bytes": [
-    0,
-    0,
-    58,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x0070",
-    "name": "BrightnessUp"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    112,
-    0
-   ]
-  },
-  {
-   "slot": 13,
-   "base": {
-    "kind": "key",
-    "usage": "0x1F",
-    "name": "2"
-   },
-   "base_bytes": [
-    0,
-    0,
-    31,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0e",
-    "a": 0,
-    "b": 1
-   },
-   "fn_bytes": [
-    14,
-    0,
-    1,
-    0
-   ]
-  },
-  {
-   "slot": 14,
-   "base": {
-    "kind": "key",
-    "usage": "0x1A",
-    "name": "W"
-   },
-   "base_bytes": [
-    0,
-    0,
-    26,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 15,
-   "base": {
-    "kind": "key",
-    "usage": "0x16",
-    "name": "S"
-   },
-   "base_bytes": [
-    0,
-    0,
-    22,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 16,
-   "base": {
-    "kind": "key",
-    "usage": "0x1D",
-    "name": "Z"
-   },
-   "base_bytes": [
-    0,
-    0,
-    29,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 6,
-    "a": 0,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    6,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 17,
-   "base": {
-    "kind": "key",
-    "usage": "0xE3",
-    "name": "LGUI"
-   },
-   "base_bytes": [
-    0,
-    0,
-    227,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 18,
-   "base": {
-    "kind": "key",
-    "usage": "0x3B",
-    "name": "F2"
-   },
-   "base_bytes": [
-    0,
-    0,
-    59,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x006F",
-    "name": "BrightnessDown"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    111,
-    0
-   ]
-  },
-  {
-   "slot": 19,
-   "base": {
-    "kind": "key",
-    "usage": "0x20",
-    "name": "3"
-   },
-   "base_bytes": [
-    0,
-    0,
-    32,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0e",
-    "a": 0,
-    "b": 2
-   },
-   "fn_bytes": [
-    14,
-    0,
-    2,
-    0
-   ]
-  },
-  {
-   "slot": 20,
-   "base": {
-    "kind": "key",
-    "usage": "0x08",
-    "name": "E"
-   },
-   "base_bytes": [
-    0,
-    0,
-    8,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 21,
-   "base": {
-    "kind": "key",
-    "usage": "0x07",
-    "name": "D"
-   },
-   "base_bytes": [
-    0,
-    0,
-    7,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 22,
-   "base": {
-    "kind": "key",
-    "usage": "0x1B",
-    "name": "X"
-   },
-   "base_bytes": [
-    0,
-    0,
-    27,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 6,
-    "a": 1,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    6,
-    1,
-    0
-   ]
-  },
-  {
-   "slot": 23,
-   "base": {
-    "kind": "key",
-    "usage": "0xE2",
-    "name": "LAlt"
-   },
-   "base_bytes": [
-    0,
-    0,
-    226,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 24,
-   "base": {
-    "kind": "key",
-    "usage": "0x3C",
-    "name": "F3"
-   },
-   "base_bytes": [
-    0,
-    0,
-    60,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x029F",
-    "name": "ACBack"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    159,
-    2
-   ]
-  },
-  {
-   "slot": 25,
-   "base": {
-    "kind": "key",
-    "usage": "0x21",
-    "name": "4"
-   },
-   "base_bytes": [
-    0,
-    0,
-    33,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0e",
-    "a": 1,
-    "b": 0
-   },
-   "fn_bytes": [
-    14,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 26,
-   "base": {
-    "kind": "key",
-    "usage": "0x15",
-    "name": "R"
-   },
-   "base_bytes": [
-    0,
-    0,
-    21,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 27,
-   "base": {
-    "kind": "key",
-    "usage": "0x09",
-    "name": "F"
-   },
-   "base_bytes": [
-    0,
-    0,
-    9,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 28,
-   "base": {
-    "kind": "key",
-    "usage": "0x06",
-    "name": "C"
-   },
-   "base_bytes": [
-    0,
-    0,
-    6,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 6,
-    "a": 2,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    6,
-    2,
-    0
-   ]
-  },
-  {
-   "slot": 30,
-   "base": {
-    "kind": "key",
-    "usage": "0x3D",
-    "name": "F4"
-   },
-   "base_bytes": [
-    0,
-    0,
-    61,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x02A0",
-    "name": "ACForward"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    160,
-    2
-   ]
-  },
-  {
-   "slot": 31,
-   "base": {
-    "kind": "key",
-    "usage": "0x22",
-    "name": "5"
-   },
-   "base_bytes": [
-    0,
-    0,
-    34,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 32,
-   "base": {
-    "kind": "key",
-    "usage": "0x17",
-    "name": "T"
-   },
-   "base_bytes": [
-    0,
-    0,
-    23,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 33,
-   "base": {
-    "kind": "key",
-    "usage": "0x0A",
-    "name": "G"
-   },
-   "base_bytes": [
-    0,
-    0,
-    10,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 34,
-   "base": {
-    "kind": "key",
-    "usage": "0x19",
-    "name": "V"
-   },
-   "base_bytes": [
-    0,
-    0,
-    25,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 6,
-    "a": 128,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    6,
-    128,
-    0
-   ]
-  },
-  {
-   "slot": 36,
-   "base": {
-    "kind": "key",
-    "usage": "0x3E",
-    "name": "F5"
-   },
-   "base_bytes": [
-    0,
-    0,
-    62,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x3E",
-    "name": "F5"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    62,
-    0
-   ]
-  },
-  {
-   "slot": 37,
-   "base": {
-    "kind": "key",
-    "usage": "0x23",
-    "name": "6"
-   },
-   "base_bytes": [
-    0,
-    0,
-    35,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 38,
-   "base": {
-    "kind": "key",
-    "usage": "0x1C",
-    "name": "Y"
-   },
-   "base_bytes": [
-    0,
-    0,
-    28,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 39,
-   "base": {
-    "kind": "key",
-    "usage": "0x0B",
-    "name": "H"
-   },
-   "base_bytes": [
-    0,
-    0,
-    11,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 40,
-   "base": {
-    "kind": "key",
-    "usage": "0x05",
-    "name": "B"
-   },
-   "base_bytes": [
-    0,
-    0,
-    5,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 41,
-   "base": {
-    "kind": "key",
-    "usage": "0x2C",
-    "name": "Space"
-   },
-   "base_bytes": [
-    0,
-    0,
-    44,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 42,
-   "base": {
-    "kind": "key",
-    "usage": "0x3F",
-    "name": "F6"
-   },
-   "base_bytes": [
-    0,
-    0,
-    63,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x3F",
-    "name": "F6"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    63,
-    0
-   ]
-  },
-  {
-   "slot": 43,
-   "base": {
-    "kind": "key",
-    "usage": "0x24",
-    "name": "7"
-   },
-   "base_bytes": [
-    0,
-    0,
-    36,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 44,
-   "base": {
-    "kind": "key",
-    "usage": "0x18",
-    "name": "U"
-   },
-   "base_bytes": [
-    0,
-    0,
-    24,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 45,
-   "base": {
-    "kind": "key",
-    "usage": "0x0D",
-    "name": "J"
-   },
-   "base_bytes": [
-    0,
-    0,
-    13,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 46,
-   "base": {
-    "kind": "key",
-    "usage": "0x11",
-    "name": "N"
-   },
-   "base_bytes": [
-    0,
-    0,
-    17,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 48,
-   "base": {
-    "kind": "key",
-    "usage": "0x40",
-    "name": "F7"
-   },
-   "base_bytes": [
-    0,
-    0,
-    64,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x00B6",
-    "name": "PrevTrack"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    182,
-    0
-   ]
-  },
-  {
-   "slot": 49,
-   "base": {
-    "kind": "key",
-    "usage": "0x25",
-    "name": "8"
-   },
-   "base_bytes": [
-    0,
-    0,
-    37,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 50,
-   "base": {
-    "kind": "key",
-    "usage": "0x0C",
-    "name": "I"
-   },
-   "base_bytes": [
-    0,
-    0,
-    12,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x46",
-    "name": "PrintScreen"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    70,
-    0
-   ]
-  },
-  {
-   "slot": 51,
-   "base": {
-    "kind": "key",
-    "usage": "0x0E",
-    "name": "K"
-   },
-   "base_bytes": [
-    0,
-    0,
-    14,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 52,
-   "base": {
-    "kind": "key",
-    "usage": "0x10",
-    "name": "M"
-   },
-   "base_bytes": [
-    0,
-    0,
-    16,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 54,
-   "base": {
-    "kind": "key",
-    "usage": "0x41",
-    "name": "F8"
-   },
-   "base_bytes": [
-    0,
-    0,
-    65,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x00CD",
-    "name": "PlayPause"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    205,
-    0
-   ]
-  },
-  {
-   "slot": 55,
-   "base": {
-    "kind": "key",
-    "usage": "0x26",
-    "name": "9"
-   },
-   "base_bytes": [
-    0,
-    0,
-    38,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 56,
-   "base": {
-    "kind": "key",
-    "usage": "0x12",
-    "name": "O"
-   },
-   "base_bytes": [
-    0,
-    0,
-    18,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x47",
-    "name": "ScrollLock"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    71,
-    0
-   ]
-  },
-  {
-   "slot": 57,
-   "base": {
-    "kind": "key",
-    "usage": "0x0F",
-    "name": "L"
-   },
-   "base_bytes": [
-    0,
-    0,
-    15,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 58,
-   "base": {
-    "kind": "key",
-    "usage": "0x36",
-    "name": "Comma"
-   },
-   "base_bytes": [
-    0,
-    0,
-    54,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 59,
-   "base": {
-    "kind": "key",
-    "usage": "0xE6",
-    "name": "RAlt"
-   },
-   "base_bytes": [
-    0,
-    0,
-    230,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x65",
-    "name": "Application"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    101,
-    0
-   ]
-  },
-  {
-   "slot": 60,
-   "base": {
-    "kind": "key",
-    "usage": "0x42",
-    "name": "F9"
-   },
-   "base_bytes": [
-    0,
-    0,
-    66,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x00B5",
-    "name": "NextTrack"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    181,
-    0
-   ]
-  },
-  {
-   "slot": 61,
-   "base": {
-    "kind": "key",
-    "usage": "0x27",
-    "name": "0"
-   },
-   "base_bytes": [
-    0,
-    0,
-    39,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 62,
-   "base": {
-    "kind": "key",
-    "usage": "0x13",
-    "name": "P"
-   },
-   "base_bytes": [
-    0,
-    0,
-    19,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x48",
-    "name": "Pause"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    72,
-    0
-   ]
-  },
-  {
-   "slot": 63,
-   "base": {
-    "kind": "key",
-    "usage": "0x33",
-    "name": "Semicolon"
-   },
-   "base_bytes": [
-    0,
-    0,
-    51,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 64,
-   "base": {
-    "kind": "key",
-    "usage": "0x37",
-    "name": "Period"
-   },
-   "base_bytes": [
-    0,
-    0,
-    55,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 65,
-   "base": {
-    "kind": "special",
-    "code": 1
-   },
-   "base_bytes": [
-    10,
-    1,
-    0,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 66,
-   "base": {
-    "kind": "key",
-    "usage": "0x43",
-    "name": "F10"
-   },
-   "base_bytes": [
-    0,
-    0,
-    67,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x00E2",
-    "name": "Mute"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    226,
-    0
-   ]
-  },
-  {
-   "slot": 67,
-   "base": {
-    "kind": "key",
-    "usage": "0x2D",
-    "name": "Minus"
-   },
-   "base_bytes": [
-    0,
-    0,
-    45,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 68,
-   "base": {
-    "kind": "key",
-    "usage": "0x2F",
-    "name": "LBracket"
-   },
-   "base_bytes": [
-    0,
-    0,
-    47,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 69,
-   "base": {
-    "kind": "key",
-    "usage": "0x34",
-    "name": "Quote"
-   },
-   "base_bytes": [
-    0,
-    0,
-    52,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 70,
-   "base": {
-    "kind": "key",
-    "usage": "0x38",
-    "name": "Slash"
-   },
-   "base_bytes": [
-    0,
-    0,
-    56,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 71,
-   "base": {
-    "kind": "key",
-    "usage": "0xE4",
-    "name": "RCtrl"
-   },
-   "base_bytes": [
-    0,
-    0,
-    228,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 1,
-    "a": 0,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    1,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 72,
-   "base": {
-    "kind": "key",
-    "usage": "0x44",
-    "name": "F11"
-   },
-   "base_bytes": [
-    0,
-    0,
-    68,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x00EA",
-    "name": "VolumeDown"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    234,
-    0
-   ]
-  },
-  {
-   "slot": 73,
-   "base": {
-    "kind": "key",
-    "usage": "0x2E",
-    "name": "Equal"
-   },
-   "base_bytes": [
-    0,
-    0,
-    46,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 74,
-   "base": {
-    "kind": "key",
-    "usage": "0x30",
-    "name": "RBracket"
-   },
-   "base_bytes": [
-    0,
-    0,
-    48,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 75,
-   "base": {
-    "kind": "key",
-    "usage": "0x32",
-    "name": "NonUSHash"
-   },
-   "base_bytes": [
-    0,
-    0,
-    50,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 76,
-   "base": {
-    "kind": "key",
-    "usage": "0xE5",
-    "name": "RShift"
-   },
-   "base_bytes": [
-    0,
-    0,
-    229,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 5,
-    "a": 1,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    5,
-    1,
-    0
-   ]
-  },
-  {
-   "slot": 77,
-   "base": {
-    "kind": "key",
-    "usage": "0x50",
-    "name": "Left"
-   },
-   "base_bytes": [
-    0,
-    0,
-    80,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 3,
-    "a": 1,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    3,
-    1,
-    0
-   ]
-  },
-  {
-   "slot": 78,
-   "base": {
-    "kind": "key",
-    "usage": "0x45",
-    "name": "F12"
-   },
-   "base_bytes": [
-    0,
-    0,
-    69,
-    0
-   ],
-   "fn": {
-    "kind": "consumer",
-    "usage": "0x00E9",
-    "name": "VolumeUp"
-   },
-   "fn_bytes": [
-    3,
-    0,
-    233,
-    0
-   ]
-  },
-  {
-   "slot": 79,
-   "base": {
-    "kind": "key",
-    "usage": "0x2A",
-    "name": "Backspace"
-   },
-   "base_bytes": [
-    0,
-    0,
-    42,
-    0
-   ],
-   "fn": {
-    "kind": "special",
-    "code": 8
-   },
-   "fn_bytes": [
-    10,
-    8,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 80,
-   "base": {
-    "kind": "key",
-    "usage": "0x31",
-    "name": "Backslash"
-   },
-   "base_bytes": [
-    0,
-    0,
-    49,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 81,
-   "base": {
-    "kind": "key",
-    "usage": "0x28",
-    "name": "Enter"
-   },
-   "base_bytes": [
-    0,
-    0,
-    40,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 82,
-   "base": {
-    "kind": "key",
-    "usage": "0x52",
-    "name": "Up"
-   },
-   "base_bytes": [
-    0,
-    0,
-    82,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 2,
-    "a": 1,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    2,
-    1,
-    0
-   ]
-  },
-  {
-   "slot": 83,
-   "base": {
-    "kind": "key",
-    "usage": "0x51",
-    "name": "Down"
-   },
-   "base_bytes": [
-    0,
-    0,
-    81,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 2,
-    "a": 2,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    2,
-    2,
-    0
-   ]
-  },
-  {
-   "slot": 84,
-   "base": {
-    "kind": "consumer",
-    "usage": "0x00E2",
-    "name": "Mute"
-   },
-   "base_bytes": [
-    3,
-    0,
-    226,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 85,
-   "base": {
-    "kind": "key",
-    "usage": "0x49",
-    "name": "Insert"
-   },
-   "base_bytes": [
-    0,
-    0,
-    73,
-    0
-   ],
-   "fn": {
-    "kind": "special",
-    "code": 12
-   },
-   "fn_bytes": [
-    10,
-    12,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 86,
-   "base": {
-    "kind": "key",
-    "usage": "0x4C",
-    "name": "Delete"
-   },
-   "base_bytes": [
-    0,
-    0,
-    76,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 1,
-    "a": 3,
-    "b": 1
-   },
-   "fn_bytes": [
-    13,
-    1,
-    3,
-    1
-   ]
-  },
-  {
-   "slot": 87,
-   "base": {
-    "kind": "key",
-    "usage": "0x4B",
-    "name": "PageUp"
-   },
-   "base_bytes": [
-    0,
-    0,
-    75,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x4A",
-    "name": "Home"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    74,
-    0
-   ]
-  },
-  {
-   "slot": 88,
-   "base": {
-    "kind": "key",
-    "usage": "0x4E",
-    "name": "PageDown"
-   },
-   "base_bytes": [
-    0,
-    0,
-    78,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x4D",
-    "name": "End"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    77,
-    0
-   ]
-  },
-  {
-   "slot": 89,
-   "base": {
-    "kind": "key",
-    "usage": "0x4F",
-    "name": "Right"
-   },
-   "base_bytes": [
-    0,
-    0,
-    79,
-    0
-   ],
-   "fn": {
-    "kind": "fn_0d",
-    "sub": 3,
-    "a": 2,
-    "b": 0
-   },
-   "fn_bytes": [
-    13,
-    3,
-    2,
-    0
-   ]
-  },
-  {
-   "slot": 90,
-   "base": {
-    "kind": "consumer",
-    "usage": "0x00E9",
-    "name": "VolumeUp"
-   },
-   "base_bytes": [
-    3,
-    0,
-    233,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  {
-   "slot": 91,
-   "base": {
-    "kind": "consumer",
-    "usage": "0x00EA",
-    "name": "VolumeDown"
-   },
-   "base_bytes": [
-    3,
-    0,
-    234,
-    0
-   ],
-   "fn": {
-    "kind": "key",
-    "usage": "0x00",
-    "name": "Transparent"
-   },
-   "fn_bytes": [
-    0,
-    0,
-    0,
-    0
-   ]
-  }
- ]
+  "device": "FL Esports MK750 (ROYUAN 3151:4015, board id 849)",
+  "profile": 0,
+  "source": "read via GET 0x89 / 0x90, profile 0, pages 0..7",
+  "slots": [
+    {
+      "slot": 0,
+      "base": {
+        "kind": "key",
+        "usage": "0x29",
+        "name": "Esc"
+      },
+      "base_bytes": [0, 0, 41, 0],
+      "fn": {
+        "kind": "special",
+        "code": 13
+      },
+      "fn_bytes": [10, 13, 0, 0]
+    },
+    {
+      "slot": 1,
+      "base": {
+        "kind": "key",
+        "usage": "0x35",
+        "name": "Backquote"
+      },
+      "base_bytes": [0, 0, 53, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 2,
+      "base": {
+        "kind": "key",
+        "usage": "0x2B",
+        "name": "Tab"
+      },
+      "base_bytes": [0, 0, 43, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 3,
+      "base": {
+        "kind": "key",
+        "usage": "0x39",
+        "name": "CapsLock"
+      },
+      "base_bytes": [0, 0, 57, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 4,
+      "base": {
+        "kind": "key",
+        "usage": "0xE1",
+        "name": "LShift"
+      },
+      "base_bytes": [0, 0, 225, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 5,
+      "base": {
+        "kind": "key",
+        "usage": "0xE0",
+        "name": "LCtrl"
+      },
+      "base_bytes": [0, 0, 224, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 7,
+      "base": {
+        "kind": "key",
+        "usage": "0x1E",
+        "name": "1"
+      },
+      "base_bytes": [0, 0, 30, 0],
+      "fn": {
+        "kind": "fn_0e",
+        "a": 0,
+        "b": 0
+      },
+      "fn_bytes": [14, 0, 0, 0]
+    },
+    {
+      "slot": 8,
+      "base": {
+        "kind": "key",
+        "usage": "0x14",
+        "name": "Q"
+      },
+      "base_bytes": [0, 0, 20, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 9,
+      "base": {
+        "kind": "key",
+        "usage": "0x04",
+        "name": "A"
+      },
+      "base_bytes": [0, 0, 4, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 10,
+      "base": {
+        "kind": "key",
+        "usage": "0x64",
+        "name": "NonUSBackslash"
+      },
+      "base_bytes": [0, 0, 100, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 12,
+      "base": {
+        "kind": "key",
+        "usage": "0x3A",
+        "name": "F1"
+      },
+      "base_bytes": [0, 0, 58, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x0070",
+        "name": "BrightnessUp"
+      },
+      "fn_bytes": [3, 0, 112, 0]
+    },
+    {
+      "slot": 13,
+      "base": {
+        "kind": "key",
+        "usage": "0x1F",
+        "name": "2"
+      },
+      "base_bytes": [0, 0, 31, 0],
+      "fn": {
+        "kind": "fn_0e",
+        "a": 0,
+        "b": 1
+      },
+      "fn_bytes": [14, 0, 1, 0]
+    },
+    {
+      "slot": 14,
+      "base": {
+        "kind": "key",
+        "usage": "0x1A",
+        "name": "W"
+      },
+      "base_bytes": [0, 0, 26, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 15,
+      "base": {
+        "kind": "key",
+        "usage": "0x16",
+        "name": "S"
+      },
+      "base_bytes": [0, 0, 22, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 16,
+      "base": {
+        "kind": "key",
+        "usage": "0x1D",
+        "name": "Z"
+      },
+      "base_bytes": [0, 0, 29, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 6,
+        "a": 0,
+        "b": 0
+      },
+      "fn_bytes": [13, 6, 0, 0]
+    },
+    {
+      "slot": 17,
+      "base": {
+        "kind": "key",
+        "usage": "0xE3",
+        "name": "LGUI"
+      },
+      "base_bytes": [0, 0, 227, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 18,
+      "base": {
+        "kind": "key",
+        "usage": "0x3B",
+        "name": "F2"
+      },
+      "base_bytes": [0, 0, 59, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x006F",
+        "name": "BrightnessDown"
+      },
+      "fn_bytes": [3, 0, 111, 0]
+    },
+    {
+      "slot": 19,
+      "base": {
+        "kind": "key",
+        "usage": "0x20",
+        "name": "3"
+      },
+      "base_bytes": [0, 0, 32, 0],
+      "fn": {
+        "kind": "fn_0e",
+        "a": 0,
+        "b": 2
+      },
+      "fn_bytes": [14, 0, 2, 0]
+    },
+    {
+      "slot": 20,
+      "base": {
+        "kind": "key",
+        "usage": "0x08",
+        "name": "E"
+      },
+      "base_bytes": [0, 0, 8, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 21,
+      "base": {
+        "kind": "key",
+        "usage": "0x07",
+        "name": "D"
+      },
+      "base_bytes": [0, 0, 7, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 22,
+      "base": {
+        "kind": "key",
+        "usage": "0x1B",
+        "name": "X"
+      },
+      "base_bytes": [0, 0, 27, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 6,
+        "a": 1,
+        "b": 0
+      },
+      "fn_bytes": [13, 6, 1, 0]
+    },
+    {
+      "slot": 23,
+      "base": {
+        "kind": "key",
+        "usage": "0xE2",
+        "name": "LAlt"
+      },
+      "base_bytes": [0, 0, 226, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 24,
+      "base": {
+        "kind": "key",
+        "usage": "0x3C",
+        "name": "F3"
+      },
+      "base_bytes": [0, 0, 60, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x029F",
+        "name": "ACBack"
+      },
+      "fn_bytes": [3, 0, 159, 2]
+    },
+    {
+      "slot": 25,
+      "base": {
+        "kind": "key",
+        "usage": "0x21",
+        "name": "4"
+      },
+      "base_bytes": [0, 0, 33, 0],
+      "fn": {
+        "kind": "fn_0e",
+        "a": 1,
+        "b": 0
+      },
+      "fn_bytes": [14, 1, 0, 0]
+    },
+    {
+      "slot": 26,
+      "base": {
+        "kind": "key",
+        "usage": "0x15",
+        "name": "R"
+      },
+      "base_bytes": [0, 0, 21, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 27,
+      "base": {
+        "kind": "key",
+        "usage": "0x09",
+        "name": "F"
+      },
+      "base_bytes": [0, 0, 9, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 28,
+      "base": {
+        "kind": "key",
+        "usage": "0x06",
+        "name": "C"
+      },
+      "base_bytes": [0, 0, 6, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 6,
+        "a": 2,
+        "b": 0
+      },
+      "fn_bytes": [13, 6, 2, 0]
+    },
+    {
+      "slot": 30,
+      "base": {
+        "kind": "key",
+        "usage": "0x3D",
+        "name": "F4"
+      },
+      "base_bytes": [0, 0, 61, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x02A0",
+        "name": "ACForward"
+      },
+      "fn_bytes": [3, 0, 160, 2]
+    },
+    {
+      "slot": 31,
+      "base": {
+        "kind": "key",
+        "usage": "0x22",
+        "name": "5"
+      },
+      "base_bytes": [0, 0, 34, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 32,
+      "base": {
+        "kind": "key",
+        "usage": "0x17",
+        "name": "T"
+      },
+      "base_bytes": [0, 0, 23, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 33,
+      "base": {
+        "kind": "key",
+        "usage": "0x0A",
+        "name": "G"
+      },
+      "base_bytes": [0, 0, 10, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 34,
+      "base": {
+        "kind": "key",
+        "usage": "0x19",
+        "name": "V"
+      },
+      "base_bytes": [0, 0, 25, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 6,
+        "a": 128,
+        "b": 0
+      },
+      "fn_bytes": [13, 6, 128, 0]
+    },
+    {
+      "slot": 36,
+      "base": {
+        "kind": "key",
+        "usage": "0x3E",
+        "name": "F5"
+      },
+      "base_bytes": [0, 0, 62, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x3E",
+        "name": "F5"
+      },
+      "fn_bytes": [0, 0, 62, 0]
+    },
+    {
+      "slot": 37,
+      "base": {
+        "kind": "key",
+        "usage": "0x23",
+        "name": "6"
+      },
+      "base_bytes": [0, 0, 35, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 38,
+      "base": {
+        "kind": "key",
+        "usage": "0x1C",
+        "name": "Y"
+      },
+      "base_bytes": [0, 0, 28, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 39,
+      "base": {
+        "kind": "key",
+        "usage": "0x0B",
+        "name": "H"
+      },
+      "base_bytes": [0, 0, 11, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 40,
+      "base": {
+        "kind": "key",
+        "usage": "0x05",
+        "name": "B"
+      },
+      "base_bytes": [0, 0, 5, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 41,
+      "base": {
+        "kind": "key",
+        "usage": "0x2C",
+        "name": "Space"
+      },
+      "base_bytes": [0, 0, 44, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 42,
+      "base": {
+        "kind": "key",
+        "usage": "0x3F",
+        "name": "F6"
+      },
+      "base_bytes": [0, 0, 63, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x3F",
+        "name": "F6"
+      },
+      "fn_bytes": [0, 0, 63, 0]
+    },
+    {
+      "slot": 43,
+      "base": {
+        "kind": "key",
+        "usage": "0x24",
+        "name": "7"
+      },
+      "base_bytes": [0, 0, 36, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 44,
+      "base": {
+        "kind": "key",
+        "usage": "0x18",
+        "name": "U"
+      },
+      "base_bytes": [0, 0, 24, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 45,
+      "base": {
+        "kind": "key",
+        "usage": "0x0D",
+        "name": "J"
+      },
+      "base_bytes": [0, 0, 13, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 46,
+      "base": {
+        "kind": "key",
+        "usage": "0x11",
+        "name": "N"
+      },
+      "base_bytes": [0, 0, 17, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 48,
+      "base": {
+        "kind": "key",
+        "usage": "0x40",
+        "name": "F7"
+      },
+      "base_bytes": [0, 0, 64, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x00B6",
+        "name": "PrevTrack"
+      },
+      "fn_bytes": [3, 0, 182, 0]
+    },
+    {
+      "slot": 49,
+      "base": {
+        "kind": "key",
+        "usage": "0x25",
+        "name": "8"
+      },
+      "base_bytes": [0, 0, 37, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 50,
+      "base": {
+        "kind": "key",
+        "usage": "0x0C",
+        "name": "I"
+      },
+      "base_bytes": [0, 0, 12, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x46",
+        "name": "PrintScreen"
+      },
+      "fn_bytes": [0, 0, 70, 0]
+    },
+    {
+      "slot": 51,
+      "base": {
+        "kind": "key",
+        "usage": "0x0E",
+        "name": "K"
+      },
+      "base_bytes": [0, 0, 14, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 52,
+      "base": {
+        "kind": "key",
+        "usage": "0x10",
+        "name": "M"
+      },
+      "base_bytes": [0, 0, 16, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 54,
+      "base": {
+        "kind": "key",
+        "usage": "0x41",
+        "name": "F8"
+      },
+      "base_bytes": [0, 0, 65, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x00CD",
+        "name": "PlayPause"
+      },
+      "fn_bytes": [3, 0, 205, 0]
+    },
+    {
+      "slot": 55,
+      "base": {
+        "kind": "key",
+        "usage": "0x26",
+        "name": "9"
+      },
+      "base_bytes": [0, 0, 38, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 56,
+      "base": {
+        "kind": "key",
+        "usage": "0x12",
+        "name": "O"
+      },
+      "base_bytes": [0, 0, 18, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x47",
+        "name": "ScrollLock"
+      },
+      "fn_bytes": [0, 0, 71, 0]
+    },
+    {
+      "slot": 57,
+      "base": {
+        "kind": "key",
+        "usage": "0x0F",
+        "name": "L"
+      },
+      "base_bytes": [0, 0, 15, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 58,
+      "base": {
+        "kind": "key",
+        "usage": "0x36",
+        "name": "Comma"
+      },
+      "base_bytes": [0, 0, 54, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 59,
+      "base": {
+        "kind": "key",
+        "usage": "0xE6",
+        "name": "RAlt"
+      },
+      "base_bytes": [0, 0, 230, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x65",
+        "name": "Application"
+      },
+      "fn_bytes": [0, 0, 101, 0]
+    },
+    {
+      "slot": 60,
+      "base": {
+        "kind": "key",
+        "usage": "0x42",
+        "name": "F9"
+      },
+      "base_bytes": [0, 0, 66, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x00B5",
+        "name": "NextTrack"
+      },
+      "fn_bytes": [3, 0, 181, 0]
+    },
+    {
+      "slot": 61,
+      "base": {
+        "kind": "key",
+        "usage": "0x27",
+        "name": "0"
+      },
+      "base_bytes": [0, 0, 39, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 62,
+      "base": {
+        "kind": "key",
+        "usage": "0x13",
+        "name": "P"
+      },
+      "base_bytes": [0, 0, 19, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x48",
+        "name": "Pause"
+      },
+      "fn_bytes": [0, 0, 72, 0]
+    },
+    {
+      "slot": 63,
+      "base": {
+        "kind": "key",
+        "usage": "0x33",
+        "name": "Semicolon"
+      },
+      "base_bytes": [0, 0, 51, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 64,
+      "base": {
+        "kind": "key",
+        "usage": "0x37",
+        "name": "Period"
+      },
+      "base_bytes": [0, 0, 55, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 65,
+      "base": {
+        "kind": "special",
+        "code": 1
+      },
+      "base_bytes": [10, 1, 0, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 66,
+      "base": {
+        "kind": "key",
+        "usage": "0x43",
+        "name": "F10"
+      },
+      "base_bytes": [0, 0, 67, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x00E2",
+        "name": "Mute"
+      },
+      "fn_bytes": [3, 0, 226, 0]
+    },
+    {
+      "slot": 67,
+      "base": {
+        "kind": "key",
+        "usage": "0x2D",
+        "name": "Minus"
+      },
+      "base_bytes": [0, 0, 45, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 68,
+      "base": {
+        "kind": "key",
+        "usage": "0x2F",
+        "name": "LBracket"
+      },
+      "base_bytes": [0, 0, 47, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 69,
+      "base": {
+        "kind": "key",
+        "usage": "0x34",
+        "name": "Quote"
+      },
+      "base_bytes": [0, 0, 52, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 70,
+      "base": {
+        "kind": "key",
+        "usage": "0x38",
+        "name": "Slash"
+      },
+      "base_bytes": [0, 0, 56, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 71,
+      "base": {
+        "kind": "key",
+        "usage": "0xE4",
+        "name": "RCtrl"
+      },
+      "base_bytes": [0, 0, 228, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 1,
+        "a": 0,
+        "b": 0
+      },
+      "fn_bytes": [13, 1, 0, 0]
+    },
+    {
+      "slot": 72,
+      "base": {
+        "kind": "key",
+        "usage": "0x44",
+        "name": "F11"
+      },
+      "base_bytes": [0, 0, 68, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x00EA",
+        "name": "VolumeDown"
+      },
+      "fn_bytes": [3, 0, 234, 0]
+    },
+    {
+      "slot": 73,
+      "base": {
+        "kind": "key",
+        "usage": "0x2E",
+        "name": "Equal"
+      },
+      "base_bytes": [0, 0, 46, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 74,
+      "base": {
+        "kind": "key",
+        "usage": "0x30",
+        "name": "RBracket"
+      },
+      "base_bytes": [0, 0, 48, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 75,
+      "base": {
+        "kind": "key",
+        "usage": "0x32",
+        "name": "NonUSHash"
+      },
+      "base_bytes": [0, 0, 50, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 76,
+      "base": {
+        "kind": "key",
+        "usage": "0xE5",
+        "name": "RShift"
+      },
+      "base_bytes": [0, 0, 229, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 5,
+        "a": 1,
+        "b": 0
+      },
+      "fn_bytes": [13, 5, 1, 0]
+    },
+    {
+      "slot": 77,
+      "base": {
+        "kind": "key",
+        "usage": "0x50",
+        "name": "Left"
+      },
+      "base_bytes": [0, 0, 80, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 3,
+        "a": 1,
+        "b": 0
+      },
+      "fn_bytes": [13, 3, 1, 0]
+    },
+    {
+      "slot": 78,
+      "base": {
+        "kind": "key",
+        "usage": "0x45",
+        "name": "F12"
+      },
+      "base_bytes": [0, 0, 69, 0],
+      "fn": {
+        "kind": "consumer",
+        "usage": "0x00E9",
+        "name": "VolumeUp"
+      },
+      "fn_bytes": [3, 0, 233, 0]
+    },
+    {
+      "slot": 79,
+      "base": {
+        "kind": "key",
+        "usage": "0x2A",
+        "name": "Backspace"
+      },
+      "base_bytes": [0, 0, 42, 0],
+      "fn": {
+        "kind": "special",
+        "code": 8
+      },
+      "fn_bytes": [10, 8, 0, 0]
+    },
+    {
+      "slot": 80,
+      "base": {
+        "kind": "key",
+        "usage": "0x31",
+        "name": "Backslash"
+      },
+      "base_bytes": [0, 0, 49, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 81,
+      "base": {
+        "kind": "key",
+        "usage": "0x28",
+        "name": "Enter"
+      },
+      "base_bytes": [0, 0, 40, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 82,
+      "base": {
+        "kind": "key",
+        "usage": "0x52",
+        "name": "Up"
+      },
+      "base_bytes": [0, 0, 82, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 2,
+        "a": 1,
+        "b": 0
+      },
+      "fn_bytes": [13, 2, 1, 0]
+    },
+    {
+      "slot": 83,
+      "base": {
+        "kind": "key",
+        "usage": "0x51",
+        "name": "Down"
+      },
+      "base_bytes": [0, 0, 81, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 2,
+        "a": 2,
+        "b": 0
+      },
+      "fn_bytes": [13, 2, 2, 0]
+    },
+    {
+      "slot": 84,
+      "base": {
+        "kind": "consumer",
+        "usage": "0x00E2",
+        "name": "Mute"
+      },
+      "base_bytes": [3, 0, 226, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 85,
+      "base": {
+        "kind": "key",
+        "usage": "0x49",
+        "name": "Insert"
+      },
+      "base_bytes": [0, 0, 73, 0],
+      "fn": {
+        "kind": "special",
+        "code": 12
+      },
+      "fn_bytes": [10, 12, 0, 0]
+    },
+    {
+      "slot": 86,
+      "base": {
+        "kind": "key",
+        "usage": "0x4C",
+        "name": "Delete"
+      },
+      "base_bytes": [0, 0, 76, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 1,
+        "a": 3,
+        "b": 1
+      },
+      "fn_bytes": [13, 1, 3, 1]
+    },
+    {
+      "slot": 87,
+      "base": {
+        "kind": "key",
+        "usage": "0x4B",
+        "name": "PageUp"
+      },
+      "base_bytes": [0, 0, 75, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x4A",
+        "name": "Home"
+      },
+      "fn_bytes": [0, 0, 74, 0]
+    },
+    {
+      "slot": 88,
+      "base": {
+        "kind": "key",
+        "usage": "0x4E",
+        "name": "PageDown"
+      },
+      "base_bytes": [0, 0, 78, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x4D",
+        "name": "End"
+      },
+      "fn_bytes": [0, 0, 77, 0]
+    },
+    {
+      "slot": 89,
+      "base": {
+        "kind": "key",
+        "usage": "0x4F",
+        "name": "Right"
+      },
+      "base_bytes": [0, 0, 79, 0],
+      "fn": {
+        "kind": "fn_0d",
+        "sub": 3,
+        "a": 2,
+        "b": 0
+      },
+      "fn_bytes": [13, 3, 2, 0]
+    },
+    {
+      "slot": 90,
+      "base": {
+        "kind": "consumer",
+        "usage": "0x00E9",
+        "name": "VolumeUp"
+      },
+      "base_bytes": [3, 0, 233, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    },
+    {
+      "slot": 91,
+      "base": {
+        "kind": "consumer",
+        "usage": "0x00EA",
+        "name": "VolumeDown"
+      },
+      "base_bytes": [3, 0, 234, 0],
+      "fn": {
+        "kind": "key",
+        "usage": "0x00",
+        "name": "Transparent"
+      },
+      "fn_bytes": [0, 0, 0, 0]
+    }
+  ]
 }

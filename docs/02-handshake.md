@@ -8,17 +8,17 @@ All packets here use the vendor feature collection on interface 2: usage page
 
 Transport rules that matter for a handshake:
 
-* A GET echoes its opcode in byte 0. Bulk page reads (keymap, Fn layer, macro,
+- A GET echoes its opcode in byte 0. Bulk page reads (keymap, Fn layer, macro,
   user picture) are the exception: they return raw bytes with no echo.
-* A SET produces no reply. A following GET can return the reply to an older GET.
+- A SET produces no reply. A following GET can return the reply to an older GET.
   Send a GET twice and use the second reply when in doubt.
-* An unsupported command replays the previous reply rather than returning an
+- An unsupported command replays the previous reply rather than returning an
   error. Identical replies to different probes mean "inconclusive", not "same
   answer twice".
-* Allow 100-300 ms to settle between requests. On this unit 250-300 ms was used.
-* Requests are Bit7: `checksum = 0xFF - (sum(bytes[0:7]) & 0xFF)` at byte 7. Only
+- Allow 100-300 ms to settle between requests. On this unit 250-300 ms was used.
+- Requests are Bit7: `checksum = 0xFF - (sum(bytes[0:7]) & 0xFF)` at byte 7. Only
   `0x07` and `0x08` (LED/side-light SET) use Bit8 with the checksum at byte 8.
-* Do not validate a reply by its checksum byte. The reply's byte 7 carries the
+- Do not validate a reply by its checksum byte. The reply's byte 7 carries the
   request's checksum, and byte 8 is zero on this firmware.
 
 ## Identify: `0x8F`
@@ -94,13 +94,13 @@ the PID or the USB product name.** Resolve it from the device.
    `8A 00 FF 00 00 00 00 76`. Also a bulk page read. On this unit the reply is
    all `FF`.
 4. Decide from the two replies:
-   * **yc500** — step 2 returned non-`FF` bytes with no `0x89` echo, *and* step 3
+   - **yc500** — step 2 returned non-`FF` bytes with no `0x89` echo, _and_ step 3
      returned all `FF`. That pair is the verified signature on this unit; the
      all-`FF` answer to `0x8A` is also the documented yc500 behavior.
-   * **gen2** — step 2 echoed `0x89` in byte 0 (on gen2, `0x89` is the options
-     GET, which echoes), *or* step 3 returned a non-all-`FF` raw page without an
+   - **gen2** — step 2 echoed `0x89` in byte 0 (on gen2, `0x89` is the options
+     GET, which echoes), _or_ step 3 returned a non-all-`FF` raw page without an
      `0x8A` echo.
-   * Otherwise the probes are inconclusive — identical replies (a replay), two
+   - Otherwise the probes are inconclusive — identical replies (a replay), two
      echoes, or two all-`FF` pages. Stop and send no writes.
 
 The checksum bytes in steps 2 and 3 are computed with the documented Bit7
@@ -109,10 +109,10 @@ formula: for `89 00 00 00 00 00 00`, `sum(bytes[0:7]) = 0x89`, so the checksum i
 `0x76`. The brief names the opcodes and arguments but does not print these two
 full request strings.
 
-| Probe | yc500 (verified on this unit) | gen2 (reference; not tested on this unit) |
-|---|---|---|
+| Probe                     | yc500 (verified on this unit)                   | gen2 (reference; not tested on this unit)           |
+| ------------------------- | ----------------------------------------------- | --------------------------------------------------- |
 | `89 00 00 00 00 00 00 76` | raw page of slot data, no echo: `00 00 29 00 …` | echoed `89 …` reply: `0x89` is the gen2 options GET |
-| `8A 00 FF 00 00 00 00 76` | all `FF` | raw keymap page, no echo |
+| `8A 00 FF 00 00 00 00 76` | all `FF`                                        | raw keymap page, no echo                            |
 
 **Conclusion for this unit: yc500.** Use only the yc500 column below. In
 particular, do not send `0x84`, `0x0A`, `0x04`, `0x01`, or any gen2-shaped
@@ -125,18 +125,18 @@ registers, never send a gen2-shaped payload to this board.
 Every gen2 value in this table is (reference; not tested on this unit). The
 "Evidence" column marks the yc500 behavior actually observed here.
 
-| Function | yc500 | gen2 | Evidence here |
-|---|---|---|---|
-| Keymap base GET | `0x89 [profile, page]`, raw page | `0x8A [profile, 0xFF, page, os]`, raw page | `0x89` slot data; `0x8A` all `FF` |
-| Keymap base SET | `0x09` bulk; `0x13` single slot | `0x0A` (slot or bulk) | not written here |
-| Profiles SET / GET | `0x05` / `0x85` | `0x04` / `0x84` | `0x85` GET verified |
-| Debounce SET / GET | `0x11` / `0x91`, value at byte 2, zero pad at byte 1 | `0x06` / `0x86`, value at byte 1 | `0x91` GET = 1 ms; range 1..10 |
-| Sleep SET / GET | `0x12` (bytes 8..15) / `0x92` (bytes 1..8) | `0x11` (bytes 8..15) / `0x91` (bytes 8..15) | `0x92` GET = 120/120/600/600 s |
-| Options SET / GET | `0x06` / `0x86`, bitfield at byte 2 | `0x09` / `0x89`, decoded fields, meanings unestablished | `0x86` GET byte 2 = `0x02` (Mac mode) |
-| Reset | `0x02`, needs about 4 s | `0x01`, bare opcode | not sent here; destructive |
-| Revision GET | `0x80`, `(reply[2]<<8)\|reply[1]` | `0x80` returns zeros over cable | `0x80` = `0x0107` |
-| Macro SET | `0x16` | `0x0B` | not written here |
-| Report rate | absent | GET `0x83`, SET `0x03` | not tested |
+| Function           | yc500                                                | gen2                                                    | Evidence here                         |
+| ------------------ | ---------------------------------------------------- | ------------------------------------------------------- | ------------------------------------- |
+| Keymap base GET    | `0x89 [profile, page]`, raw page                     | `0x8A [profile, 0xFF, page, os]`, raw page              | `0x89` slot data; `0x8A` all `FF`     |
+| Keymap base SET    | `0x09` bulk; `0x13` single slot                      | `0x0A` (slot or bulk)                                   | not written here                      |
+| Profiles SET / GET | `0x05` / `0x85`                                      | `0x04` / `0x84`                                         | `0x85` GET verified                   |
+| Debounce SET / GET | `0x11` / `0x91`, value at byte 2, zero pad at byte 1 | `0x06` / `0x86`, value at byte 1                        | `0x91` GET = 1 ms; range 1..10        |
+| Sleep SET / GET    | `0x12` (bytes 8..15) / `0x92` (bytes 1..8)           | `0x11` (bytes 8..15) / `0x91` (bytes 8..15)             | `0x92` GET = 120/120/600/600 s        |
+| Options SET / GET  | `0x06` / `0x86`, bitfield at byte 2                  | `0x09` / `0x89`, decoded fields, meanings unestablished | `0x86` GET byte 2 = `0x02` (Mac mode) |
+| Reset              | `0x02`, needs about 4 s                              | `0x01`, bare opcode                                     | not sent here; destructive            |
+| Revision GET       | `0x80`, `(reply[2]<<8)\|reply[1]`                    | `0x80` returns zeros over cable                         | `0x80` = `0x0107`                     |
+| Macro SET          | `0x16`                                               | `0x0B`                                                  | not written here                      |
+| Report rate        | absent                                               | GET `0x83`, SET `0x03`                                  | not tested                            |
 
 The opcode collisions are the reason for the decision procedure: yc500
 `SET_KEYMATRIX` (`0x09`) is gen2 `SET_KBOPTION`, yc500 `SET_KBOPTION` (`0x06`)
@@ -239,7 +239,7 @@ finally:
 
 ## Sources
 
-* [MK750 recon findings (local, verified source of truth)](data/recon-findings.md)
-* [sharkfin protocol reference](https://github.com/dniminenn/sharkfin/blob/master/docs/PROTOCOL.md)
-* [sharkfin board registry](https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md)
-* [`hidapi` Python bindings](https://pypi.org/project/hidapi/)
+- [MK750 recon findings (local, verified source of truth)](data/recon-findings.md)
+- [sharkfin protocol reference](https://github.com/dniminenn/sharkfin/blob/master/docs/PROTOCOL.md)
+- [sharkfin board registry](https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md)
+- [`hidapi` Python bindings](https://pypi.org/project/hidapi/)

@@ -3,18 +3,18 @@
 Every command in this documentation travels in a 64-byte HID feature report on
 the MK750's vendor collection. The facts below were verified on the FL Esports
 MK750 (board 849, `3151:4015`, firmware 1.07, **yc500** family) over wired
-USB-C. Claims from the public reference are marked *(reference; not tested on
-this unit)*.
+USB-C. Claims from the public reference are marked _(reference; not tested on
+this unit)_.
 
 ## HID topology
 
 From `docs/data/hid-descriptors.txt`:
 
-| Interface | Primary usage page | Primary usage | Max input | Max output | Max feature | Purpose |
-|---|---|---|---|---|---|---|
-| 0 | `0x0001` | `0x06` | 8 | 1 | 0 | boot keyboard |
-| 1 | `0x000C` | `0x01` | 16 | 1 | 1 | consumer + system + NKRO keyboard + mouse + vendor input `0xFFFF:0x01` (report ID 5) |
-| **2** | **`0xFFFF`** | **`0x02`** | 0 | 0 | **64** | **vendor feature channel — all commands in these docs** |
+| Interface | Primary usage page | Primary usage | Max input | Max output | Max feature | Purpose                                                                              |
+| --------- | ------------------ | ------------- | --------- | ---------- | ----------- | ------------------------------------------------------------------------------------ |
+| 0         | `0x0001`           | `0x06`        | 8         | 1          | 0           | boot keyboard                                                                        |
+| 1         | `0x000C`           | `0x01`        | 16        | 1          | 1           | consumer + system + NKRO keyboard + mouse + vendor input `0xFFFF:0x01` (report ID 5) |
+| **2**     | **`0xFFFF`**       | **`0x02`**    | 0         | 0          | **64**      | **vendor feature channel — all commands in these docs**                              |
 
 Interface 2 is the only command channel. Its report descriptor is:
 
@@ -31,11 +31,11 @@ stream on other boards); it is not the configuration channel.
 
 ## Link choices
 
-| Link | Usable for these commands? |
-|---|---|
-| Wired USB-C | Yes. All verified exchanges used this link. |
-| Bluetooth (`MK750 BT5.0 KB1`) | No. Bluetooth does not expose the `0xFFFF:0x02` vendor collection, so there is nowhere to send a feature report. Enumerate over cable instead. |
-| 2.4 GHz receiver | *(reference; not tested on this unit)* Only if the receiver itself enumerates the `0xFFFF:0x02` collection and relays to the keyboard. A receiver (`3151:4011` on an X86) answers its own opcodes and relays everything else after a target-select step; not every receiver relays (the Typhoon Ultimate TKL's does not). Receiver opcodes are Bit7 and their replies do not echo the opcode. The relay sequence is: poll `0xF7` until `[5] == 1`, send `0xF6 10` (keyboard), send the keyboard packet with its usual checksum, poll `0xF7` until `[0] == 1`, send bare `0xFC`, then GET the keyboard's reply (opcode echoed). A reply is ready about 100 ms after the send and the receiver accepts the next packet about 70 ms after a write; the vendor polls up to five times at 100 ms. Without the select step a keyboard packet is dropped and a keyboard GET returns the receiver's previous reply. A SET leaves no reply waiting. Battery percentage appears in receiver status reply byte 1. This unit's receiver was not probed; use the cable. |
+| Link                          | Usable for these commands?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wired USB-C                   | Yes. All verified exchanges used this link.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Bluetooth (`MK750 BT5.0 KB1`) | No. Bluetooth does not expose the `0xFFFF:0x02` vendor collection, so there is nowhere to send a feature report. Enumerate over cable instead.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 2.4 GHz receiver              | _(reference; not tested on this unit)_ Only if the receiver itself enumerates the `0xFFFF:0x02` collection and relays to the keyboard. A receiver (`3151:4011` on an X86) answers its own opcodes and relays everything else after a target-select step; not every receiver relays (the Typhoon Ultimate TKL's does not). Receiver opcodes are Bit7 and their replies do not echo the opcode. The relay sequence is: poll `0xF7` until `[5] == 1`, send `0xF6 10` (keyboard), send the keyboard packet with its usual checksum, poll `0xF7` until `[0] == 1`, send bare `0xFC`, then GET the keyboard's reply (opcode echoed). A reply is ready about 100 ms after the send and the receiver accepts the next packet about 70 ms after a write; the vendor polls up to five times at 100 ms. Without the select step a keyboard packet is dropped and a keyboard GET returns the receiver's previous reply. A SET leaves no reply waiting. Battery percentage appears in receiver status reply byte 1. This unit's receiver was not probed; use the cable. |
 
 ## `hidapi` framing
 
@@ -155,6 +155,7 @@ enumeration on every launch and after any re-enumeration.
 
   Add your user to `plugdev` if necessary. The 65-byte buffer shape is the
   same as in the ioctl example above.
+
 - **Windows.** `hidapi` calls the OS HID API (`HidD_SetFeature` /
   `HidD_GetFeature`) through `hid.dll`. No vendor kernel driver is required to
   use the 64-byte feature reports; a vendor driver is only relevant to the
@@ -164,14 +165,14 @@ enumeration on every launch and after any re-enumeration.
 
 ## Transaction pattern
 
-| Rule | Detail |
-|---|---|
-| SET has no reply | A write is fire-and-forget. Do not wait for a response to a SET. |
-| GET echoes the opcode | Reply byte 0 equals the request opcode. Bulk page reads (`0x89`, `0x90`, `0x8B`, etc.) return raw 64-byte pages with no echo. |
-| Unsupported command | Replays the previous reply, not an error. Compare with the immediately preceding response, not with zero. |
-| GET twice after a SET | The first GET can return the reply to an older GET. Send the GET twice and use the second reply. |
-| Settle | Allow 100–300 ms between a SET and the following GET. The reference uses about 100 ms; the probes on this unit used 250–300 ms. |
-| Reply checksum | Do not validate a reply by its checksum byte. The reply's byte 8 is `0x00` on this firmware. |
+| Rule                  | Detail                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| SET has no reply      | A write is fire-and-forget. Do not wait for a response to a SET.                                                                |
+| GET echoes the opcode | Reply byte 0 equals the request opcode. Bulk page reads (`0x89`, `0x90`, `0x8B`, etc.) return raw 64-byte pages with no echo.   |
+| Unsupported command   | Replays the previous reply, not an error. Compare with the immediately preceding response, not with zero.                       |
+| GET twice after a SET | The first GET can return the reply to an older GET. Send the GET twice and use the second reply.                                |
+| Settle                | Allow 100–300 ms between a SET and the following GET. The reference uses about 100 ms; the probes on this unit used 250–300 ms. |
+| Reply checksum        | Do not validate a reply by its checksum byte. The reply's byte 8 is `0x00` on this firmware.                                    |
 
 ## Checksums
 
@@ -180,11 +181,11 @@ Bit7: checksum = 0xFF - (sum(bytes[0:7]) & 0xFF)   stored at byte 7
 Bit8: checksum = 0xFF - (sum(bytes[0:8]) & 0xFF)   stored at byte 8
 ```
 
-| Mode | Covers | Stored at | Used by |
-|---|---|---|---|
-| Bit7 | payload bytes 0..6 | byte 7 | all app-mode requests except the two below; bulk flash writes (`0x09`, `0x10`, `0x0C`, `0x16`) use Bit7 for their command packets, while the 56-byte data pages carry no checksum *(reference)* |
-| Bit8 | payload bytes 0..7 | byte 8 | `SET_LEDPARAM` (`0x07`) and `SET_SLEDPARAM` (`0x08`) only |
-| none | — | — | USB boot data path and OLED/TFT data reports *(reference)* |
+| Mode | Covers             | Stored at | Used by                                                                                                                                                                                         |
+| ---- | ------------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bit7 | payload bytes 0..6 | byte 7    | all app-mode requests except the two below; bulk flash writes (`0x09`, `0x10`, `0x0C`, `0x16`) use Bit7 for their command packets, while the 56-byte data pages carry no checksum _(reference)_ |
+| Bit8 | payload bytes 0..7 | byte 8    | `SET_LEDPARAM` (`0x07`) and `SET_SLEDPARAM` (`0x08`) only                                                                                                                                       |
+| none | —                  | —         | USB boot data path and OLED/TFT data reports _(reference)_                                                                                                                                      |
 
 Worked Bit7 examples from the captured requests (all other payload bytes are
 zero):
@@ -211,8 +212,8 @@ SET SLEDPARAM restore 08 01 03 04 08 ff ff ff ea   sum = 0x315 -> ck8 = 0xEA
 
 On this unit, lighting GETs (`0x87`, `0x88`) returned the current state with
 either checksum position. Use the standard split anyway: Bit7 for every GET,
-Bit8 only for the two lighting SETs. *(reference for the split; the tolerance
-on GETs was measured on this unit.)*
+Bit8 only for the two lighting SETs. _(reference for the split; the tolerance
+on GETs was measured on this unit.)_
 
 ## Worked example: identify, revision, LED GET, restore
 
@@ -305,13 +306,13 @@ SET SLEDPARAM restore 08 01 03 04 08 ff ff ff ea   GET after: 88 01 03 04 08 ff 
 
 ## Error handling
 
-| Symptom | Likely cause | Action |
-|---|---|---|
-| `read error`, short read, or wrong first byte | 64-byte buffer passed where 65 is required, missing leading `0x00`, or wrong report ID | Check the framing first: `send_feature_report(b"\x00" + payload)` and `get_feature_report(0, 65)`. Validate length 65 and `buf[0] == 0` before using the reply. |
-| Stalled control endpoint: every report fails, e.g. `ioctl (SFEATURE): Protocol error` | Too-fast flash-bound writes, notably per-key colour uploads *(reference; pacing verified on this unit)* | Slow down: 2 uploads / 10 s, pages 100 ms apart, 2 s settle. Reopening alone will not recover a stalled endpoint; the device needs USB re-enumeration. |
-| Stale reply (GET returns the previous opcode or previous data) | SET produced no reply; unsupported command replayed the previous reply; `0x8C` USERPIC GET returns stable stale data | Send GET twice and use the second reply. Compare with the preceding response, not with zero. Check the opcode echo, except on raw page reads. |
-| All-`FF` answer to `0x8A` | Expected yc500 behaviour on this unit, not a device failure | Treat as the family signal; use `0x89`/`0x90` for keymap reads. Do not retry with gen2 commands. |
-| Device busy / dropped packet | Receiver relay not selected or too soon after a write *(reference; not tested on this unit)*; display link busy bit drops frames silently *(reference)* | Over the receiver, poll `0xF7` for `[5] == 1`, select with `0xF6 10`, send, poll `0xF7` for `[0] == 1`, release with `0xFC`, then GET. Space packets at least 70 ms; budget about 100 ms for a reply. Treat silence as failure. |
+| Symptom                                                                               | Likely cause                                                                                                                                            | Action                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `read error`, short read, or wrong first byte                                         | 64-byte buffer passed where 65 is required, missing leading `0x00`, or wrong report ID                                                                  | Check the framing first: `send_feature_report(b"\x00" + payload)` and `get_feature_report(0, 65)`. Validate length 65 and `buf[0] == 0` before using the reply.                                                                 |
+| Stalled control endpoint: every report fails, e.g. `ioctl (SFEATURE): Protocol error` | Too-fast flash-bound writes, notably per-key colour uploads _(reference; pacing verified on this unit)_                                                 | Slow down: 2 uploads / 10 s, pages 100 ms apart, 2 s settle. Reopening alone will not recover a stalled endpoint; the device needs USB re-enumeration.                                                                          |
+| Stale reply (GET returns the previous opcode or previous data)                        | SET produced no reply; unsupported command replayed the previous reply; `0x8C` USERPIC GET returns stable stale data                                    | Send GET twice and use the second reply. Compare with the preceding response, not with zero. Check the opcode echo, except on raw page reads.                                                                                   |
+| All-`FF` answer to `0x8A`                                                             | Expected yc500 behaviour on this unit, not a device failure                                                                                             | Treat as the family signal; use `0x89`/`0x90` for keymap reads. Do not retry with gen2 commands.                                                                                                                                |
+| Device busy / dropped packet                                                          | Receiver relay not selected or too soon after a write _(reference; not tested on this unit)_; display link busy bit drops frames silently _(reference)_ | Over the receiver, poll `0xF7` for `[5] == 1`, select with `0xF6 10`, send, poll `0xF7` for `[0] == 1`, release with `0xFC`, then GET. Space packets at least 70 ms; budget about 100 ms for a reply. Treat silence as failure. |
 
 Retry policy: settle 100–300 ms between attempts; retry a failed read up to
 three times with linear backoff (about 100 ms, 200 ms, 300 ms); re-enumerate
@@ -323,13 +324,13 @@ exchange can be restored.
 
 ## Sources
 
-* Recon brief (source of truth for this unit): `docs/data/recon-findings.md`
-* HID descriptors and enumeration sample: `docs/data/hid-descriptors.txt`
-* sharkfin protocol, authoritative public reverse-engineering reference:
+- Recon brief (source of truth for this unit): `docs/data/recon-findings.md`
+- HID descriptors and enumeration sample: `docs/data/hid-descriptors.txt`
+- sharkfin protocol, authoritative public reverse-engineering reference:
   https://github.com/dniminenn/sharkfin/blob/master/docs/PROTOCOL.md
-* sharkfin board registry (row `腹灵 MK750 | 849 | 3151:4015 | unknown` before
+- sharkfin board registry (row `腹灵 MK750 | 849 | 3151:4015 | unknown` before
   this recon): https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md
-* `hidapi` Python bindings: https://pypi.org/project/hidapi/
-* Linux `hidraw` and feature-report ioctls:
+- `hidapi` Python bindings: https://pypi.org/project/hidapi/
+- Linux `hidraw` and feature-report ioctls:
   https://docs.kernel.org/7.3/hid/hidraw.html
-* FL Esports official software page: https://flesportsglobal.com/pages/software
+- FL Esports official software page: https://flesportsglobal.com/pages/software

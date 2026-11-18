@@ -27,21 +27,21 @@ previous reply, not an error.
 Everything in this document falls into one of two groups. Keep them separate in
 any tool you build.
 
-| Safe reads (no state changes) | Live writes (change flash or RAM state) |
-|---|---|
-| `0x85` profile, `0x91` debounce, `0x92` sleep, `0x86` options, `0x97` auto-OS | `0x05` profile, `0x11` debounce, `0x12` sleep, `0x06` options, `0x17` auto-OS |
-| `0x8C` per-key colour (returns stale data, see below) | `0x0C` per-key colour (flash write, endpoint-stall hazard) |
-| `0xF7` on a 2.4 GHz receiver (not tested on this unit) | `0x02` factory reset, `0xAC`/`0x2C` flash erase, `0x30` display boot (never in normal tooling) |
+| Safe reads (no state changes)                                                 | Live writes (change flash or RAM state)                                                        |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `0x85` profile, `0x91` debounce, `0x92` sleep, `0x86` options, `0x97` auto-OS | `0x05` profile, `0x11` debounce, `0x12` sleep, `0x06` options, `0x17` auto-OS                  |
+| `0x8C` per-key colour (returns stale data, see below)                         | `0x0C` per-key colour (flash write, endpoint-stall hazard)                                     |
+| `0xF7` on a 2.4 GHz receiver (not tested on this unit)                        | `0x02` factory reset, `0xAC`/`0x2C` flash erase, `0x30` display boot (never in normal tooling) |
 
 The per-key colour, screen, and reset sections are deliberately placed after
 the settings sections and carry their own warnings.
 
 ## Profiles
 
-| | SET | GET |
-|---|---|---|
+|                            | SET    | GET    |
+| -------------------------- | ------ | ------ |
 | yc500 (this unit) **[HW]** | `0x05` | `0x85` |
-| gen2 **[HW]** | `0x04` | `0x84` |
+| gen2 **[HW]**              | `0x04` | `0x84` |
 
 GET returns the current, zero-based index in `reply[1]`. There is **no count
 query**: nothing on the wire tells you how many profiles exist. Verified reply
@@ -107,10 +107,10 @@ any experiment.
 Four `u16` little-endian values in seconds, in this order: sleep BT, sleep
 2.4G, deep BT, deep 2.4G. The offsets differ between SET and GET.
 
-| Command | Offsets |
-|---|---|
-| yc500 SET `0x12` | bytes **8..15** **[HW]** |
-| yc500 GET `0x92` | bytes **1..8** (not the SET offsets) **[HW]** |
+| Command                      | Offsets                                                  |
+| ---------------------------- | -------------------------------------------------------- |
+| yc500 SET `0x12`             | bytes **8..15** **[HW]**                                 |
+| yc500 GET `0x92`             | bytes **1..8** (not the SET offsets) **[HW]**            |
 | gen2 SET `0x11` / GET `0x91` | bytes 8..15 (SET **[FW]**, GET **[HW]**; reference only) |
 
 Verified on this unit:
@@ -133,15 +133,15 @@ print(sleep_bt, sleep_24g, deep_bt, deep_24g)   # 120 120 600 600
 
 yc500 uses **SET `0x06` / GET `0x86`**. The GET reply byte 2 is a bitfield:
 
-| Bit | Value | Meaning |
-|---|---|---|
-| 0 | `1` | Win lock |
-| 1 | `2` | Mac mode |
-| 3 | `8` | WASD swap |
-| 4 | `16` | Backlight off |
-| 5 | `32` | Side light off |
-| 6 | `64` | Keyboard mode |
-| 7 | `128` | Keyboard lock |
+| Bit | Value | Meaning        |
+| --- | ----- | -------------- |
+| 0   | `1`   | Win lock       |
+| 1   | `2`   | Mac mode       |
+| 3   | `8`   | WASD swap      |
+| 4   | `16`  | Backlight off  |
+| 5   | `32`  | Side light off |
+| 6   | `64`  | Keyboard mode  |
+| 7   | `128` | Keyboard lock  |
 
 Byte 3 is the Fn matrix flag and byte 4 is power save. Bit `128` locks the
 keyboard. The vendor's setter writes Mac mode at bit 1 while its getter reads
@@ -196,14 +196,14 @@ tool.** `SET_USERPIC 0x0C` uploads RGB triples in matrix order over seven pages,
 gen2 but the header is not.
 
 | Byte | yc500 header **[HW]** |
-|---|---|
-| 0 | `0x0C` (opcode) |
-| 1 | `0` |
-| 2 | length low |
-| 3 | length high |
-| 4 | page, 0..6 |
-| 5 | `0` |
-| 8.. | 56 bytes of RGB data |
+| ---- | --------------------- |
+| 0    | `0x0C` (opcode)       |
+| 1    | `0`                   |
+| 2    | length low            |
+| 3    | length high           |
+| 4    | page, 0..6            |
+| 5    | `0`                   |
+| 8..  | 56 bytes of RGB data  |
 
 `GET_USERPIC 0x8C` returns stable data that does not reflect writes: treat it as
 **write-only** (reference; not tested on this unit). Display the uploaded image
@@ -212,12 +212,12 @@ USERPIC slot; that detail is not evidenced for yc500 here.
 
 Uploads land in flash. The measured cadence on the reference benches:
 
-| Cadence | Result |
-|---|---|
-| 7 reports / 500 ms | endpoint dies after ~13 reports |
-| 7 reports / 3 s | 42 reports, still responsive |
-| 2 uploads / 5 s, pages 40 ms apart, mode switch 600 ms after | stalled on the second |
-| 2 uploads / 10 s, pages 100 ms apart, 2 s settle, no redundant mode switch | survives |
+| Cadence                                                                    | Result                          |
+| -------------------------------------------------------------------------- | ------------------------------- |
+| 7 reports / 500 ms                                                         | endpoint dies after ~13 reports |
+| 7 reports / 3 s                                                            | 42 reports, still responsive    |
+| 2 uploads / 5 s, pages 40 ms apart, mode switch 600 ms after               | stalled on the second           |
+| 2 uploads / 10 s, pages 100 ms apart, 2 s settle, no redundant mode switch | survives                        |
 
 Individual reports needed about 12 ms spacing. A stalled endpoint fails every
 report with `ioctl (SFEATURE): Protocol error` and does not recover on reopen;
@@ -233,13 +233,13 @@ without panels. Nothing here should be sent by default tooling. These opcodes
 come from the reference; screen geometry is per board (`other.screen`: `size.w`,
 `size.h`, `mode`, `layer`) and no default size may be assumed.
 
-| Opcode | Role | Notes |
-|---|---|---|
-| `0xA5` / `0x25` | announce / data, mode 16 (RGB565) **[FW]** | yc500 image with a panel; announce payload `[1]` frame, `[2]` count, `[3]` delay, `[4..6]` length u16 LE, `[8..12]` box; data has a header and 56 bytes from byte 8 |
-| `0xA9` / `0x29` | announce / data, mode 24 (RGB triples) **[FW]** | alternate pair; each panel image implements one pair and rejects the other |
-| `0x28` | clock, Bit7 **[FW] [HW]** | fields after the checksum: bytes 8/9 year big-endian, 10 month 1..12, 11 day, 12 hour 0..23, 13 minute, 14 second. No read; round-tripped on a gen2 K86, not on this unit |
-| `0xAC` / `0x2C` | flash-chip erase / display erase | **Destructive.** `0xAC` erases every picture on gen2 (~55 s). Never send blind |
-| `0x30` / `0x31` | display-chip boot in both families **[FW]** | `0x30` with trailer `55 AA 55 AA` is boot entry; never send from normal tooling |
+| Opcode          | Role                                            | Notes                                                                                                                                                                     |
+| --------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0xA5` / `0x25` | announce / data, mode 16 (RGB565) **[FW]**      | yc500 image with a panel; announce payload `[1]` frame, `[2]` count, `[3]` delay, `[4..6]` length u16 LE, `[8..12]` box; data has a header and 56 bytes from byte 8       |
+| `0xA9` / `0x29` | announce / data, mode 24 (RGB triples) **[FW]** | alternate pair; each panel image implements one pair and rejects the other                                                                                                |
+| `0x28`          | clock, Bit7 **[FW] [HW]**                       | fields after the checksum: bytes 8/9 year big-endian, 10 month 1..12, 11 day, 12 hour 0..23, 13 minute, 14 second. No read; round-tripped on a gen2 K86, not on this unit |
+| `0xAC` / `0x2C` | flash-chip erase / display erase                | **Destructive.** `0xAC` erases every picture on gen2 (~55 s). Never send blind                                                                                            |
+| `0x30` / `0x31` | display-chip boot in both families **[FW]**     | `0x30` with trailer `55 AA 55 AA` is boot entry; never send from normal tooling                                                                                           |
 
 `0xAD` and `0xAE` are GETs of display chip firmware versions, not erases; a
 gen2 board with no display answers with a zero word instead of echoing **[HW]**.
@@ -288,7 +288,7 @@ options byte2 `0x02` / byte3 `0x02` / byte4 0, auto-OS enabled.
 
 ## Sources
 
-* [sharkfin protocol reference](https://github.com/dniminenn/sharkfin/blob/master/docs/PROTOCOL.md) — opcodes, offsets, ranges, pacing, hazards, and display/reset/battery claims.
-* [sharkfin board registry](https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md) — row `腹灵 MK750 | 849 | 3151:4015`.
-* [MK750 recon findings (local brief)](data/recon-findings.md) — verified values, exact bytes, and family determination for this unit.
-* [`hidapi` Python bindings](https://pypi.org/project/hidapi/) — feature-report API used in the examples.
+- [sharkfin protocol reference](https://github.com/dniminenn/sharkfin/blob/master/docs/PROTOCOL.md) — opcodes, offsets, ranges, pacing, hazards, and display/reset/battery claims.
+- [sharkfin board registry](https://github.com/dniminenn/sharkfin/blob/master/docs/BOARDS.md) — row `腹灵 MK750 | 849 | 3151:4015`.
+- [MK750 recon findings (local brief)](data/recon-findings.md) — verified values, exact bytes, and family determination for this unit.
+- [`hidapi` Python bindings](https://pypi.org/project/hidapi/) — feature-report API used in the examples.

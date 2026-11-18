@@ -11,55 +11,55 @@ of truth for the verified values.
 
 ## Device identity
 
-| Field | Value |
-|---|---|
-| Marketing name | FL Esports MK750 (75%, 82 keys, tri-mode) |
-| Bluetooth name | `MK750 BT5.0 KB1` (not used; the vendor collection is cable-only) |
-| USB VID/PID | `0x3151` / `0x4015` (`ROYUAN`, `Gaming Keyboard`) |
-| Board ID | `849` (`0x00000351`), sharkfin registry row `腹灵 MK750 \| 849 \| 3151:4015 \| unknown` |
-| Protocol family | `yc500` (verified on this unit; sharkfin registry says `unknown`) |
-| Firmware revision | `1.07` (revision reply `0x0107`) |
-| Active profile | `0` |
-| Vendor feature collection | usage page `0xFFFF`, usage `2`, interface `2` |
-| Report size | 64 data bytes |
-| Report ID | `0` (the descriptor has no Report ID item) |
-| Transport used | Wired USB-C; Bluetooth does not expose the `0xFFFF:2` collection |
+| Field                     | Value                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| Marketing name            | FL Esports MK750 (75%, 82 keys, tri-mode)                                               |
+| Bluetooth name            | `MK750 BT5.0 KB1` (not used; the vendor collection is cable-only)                       |
+| USB VID/PID               | `0x3151` / `0x4015` (`ROYUAN`, `Gaming Keyboard`)                                       |
+| Board ID                  | `849` (`0x00000351`), sharkfin registry row `腹灵 MK750 \| 849 \| 3151:4015 \| unknown` |
+| Protocol family           | `yc500` (verified on this unit; sharkfin registry says `unknown`)                       |
+| Firmware revision         | `1.07` (revision reply `0x0107`)                                                        |
+| Active profile            | `0`                                                                                     |
+| Vendor feature collection | usage page `0xFFFF`, usage `2`, interface `2`                                           |
+| Report size               | 64 data bytes                                                                           |
+| Report ID                 | `0` (the descriptor has no Report ID item)                                              |
+| Transport used            | Wired USB-C; Bluetooth does not expose the `0xFFFF:2` collection                        |
 
 ## What is verified
 
-| Area | Status | Basis |
-|---|---|---|
-| Device identity (board ID, family, revision) | Verified | `8F` identify → 849; `80` revision → 1.07 |
-| Main LED read / write / restore | Verified | `87` GET, `07` SET, read-back and restore |
-| Side light read / write / restore | Verified | `88` GET, `08` SET, read-back and restore |
-| Keymap base + Fn layer read | Verified | `89` / `90`, pages 0..7 |
-| Macros read | Verified | `8B` raw page read |
-| Settings read (profile, debounce, sleep, options, auto-OS) | Verified | `85`, `91`, `92`, `86`, `97` |
-| Keymap write | Not tested | reference-only |
-| Macro write | Not tested | reference-only |
-| Per-key colour (USERPIC) upload | Not tested | reference-only |
-| Reset (`0x02`) | Not tested | reference-only |
-| Bootloader / firmware flashing (`0x7F`) | Not tested | reference-only |
-| 2.4 GHz receiver | Not tested | reference-only |
-| Battery | Not tested | reference-only |
+| Area                                                       | Status     | Basis                                     |
+| ---------------------------------------------------------- | ---------- | ----------------------------------------- |
+| Device identity (board ID, family, revision)               | Verified   | `8F` identify → 849; `80` revision → 1.07 |
+| Main LED read / write / restore                            | Verified   | `87` GET, `07` SET, read-back and restore |
+| Side light read / write / restore                          | Verified   | `88` GET, `08` SET, read-back and restore |
+| Keymap base + Fn layer read                                | Verified   | `89` / `90`, pages 0..7                   |
+| Macros read                                                | Verified   | `8B` raw page read                        |
+| Settings read (profile, debounce, sleep, options, auto-OS) | Verified   | `85`, `91`, `92`, `86`, `97`              |
+| Keymap write                                               | Not tested | reference-only                            |
+| Macro write                                                | Not tested | reference-only                            |
+| Per-key colour (USERPIC) upload                            | Not tested | reference-only                            |
+| Reset (`0x02`)                                             | Not tested | reference-only                            |
+| Bootloader / firmware flashing (`0x7F`)                    | Not tested | reference-only                            |
+| 2.4 GHz receiver                                           | Not tested | reference-only                            |
+| Battery                                                    | Not tested | reference-only                            |
 
 "Not tested" means the opcode is described in the public reference but no write
 was sent to this unit; treat those rows as reference-only.
 
 ## Documentation map
 
-| Document | Contents |
-|---|---|
-| [01-transport.md](01-transport.md) | HID descriptor, 65-byte report framing, Bit7/Bit8 checksums |
-| [02-handshake.md](02-handshake.md) | Opening the device, identify, family detection, SET/GET settle rules |
-| [03-lighting.md](03-lighting.md) | Main LED and side-light modes, byte layout, verified writes |
-| [04-keymap-and-macros.md](04-keymap-and-macros.md) | Base/Fn page reads, slot encoding, macro reads |
-| [05-settings-and-profiles.md](05-settings-and-profiles.md) | Profile, debounce, sleep, options, auto-OS |
-| [06-safety-and-troubleshooting.md](06-safety-and-troubleshooting.md) | Destructive opcodes, backup discipline, failure symptoms |
-| [07-verification.md](07-verification.md) | Exact probe bytes and how to reproduce them |
-| [08-command-reference.md](08-command-reference.md) | Opcode table with byte layouts and evidence markers |
-| [09-macos-app.md](09-macos-app.md) | Native macOS app, menu bar controls, build commands, and safety |
-| [examples/mk750ctl.py](examples/mk750ctl.py) | Runnable CLI for the safe operations |
+| Document                                                             | Contents                                                             |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [01-transport.md](01-transport.md)                                   | HID descriptor, 65-byte report framing, Bit7/Bit8 checksums          |
+| [02-handshake.md](02-handshake.md)                                   | Opening the device, identify, family detection, SET/GET settle rules |
+| [03-lighting.md](03-lighting.md)                                     | Main LED and side-light modes, byte layout, verified writes          |
+| [04-keymap-and-macros.md](04-keymap-and-macros.md)                   | Base/Fn page reads, slot encoding, macro reads                       |
+| [05-settings-and-profiles.md](05-settings-and-profiles.md)           | Profile, debounce, sleep, options, auto-OS                           |
+| [06-safety-and-troubleshooting.md](06-safety-and-troubleshooting.md) | Destructive opcodes, backup discipline, failure symptoms             |
+| [07-verification.md](07-verification.md)                             | Exact probe bytes and how to reproduce them                          |
+| [08-command-reference.md](08-command-reference.md)                   | Opcode table with byte layouts and evidence markers                  |
+| [09-macos-app.md](09-macos-app.md)                                   | Native macOS app, menu bar controls, build commands, and safety      |
+| [examples/mk750ctl.py](examples/mk750ctl.py)                         | Runnable CLI for the safe operations                                 |
 
 Data artifacts under [`data/`](data/):
 

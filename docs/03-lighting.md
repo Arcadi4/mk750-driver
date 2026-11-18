@@ -15,15 +15,15 @@ payload on `0xFFFF:2`, interface 2, report ID 0. Add a leading `0x00` byte when 
  0    1      2         3                4        5  6  7    8
 ```
 
-| Byte | Meaning |
-|---|---|
-| 0 | opcode: `0x07`/`0x08` for SET, `0x87`/`0x88` for GET |
-| 1 | mode number (see below) |
-| 2 | speed wire value |
-| 3 | brightness |
-| 4 | low nibble = flags, high nibble = mode-specific option |
-| 5, 6, 7 | RGB, in that order |
-| 8 | Bit8 checksum slot on SET: `0xFF - (sum(bytes[0:8]) & 0xFF)` (reference) |
+| Byte    | Meaning                                                                  |
+| ------- | ------------------------------------------------------------------------ |
+| 0       | opcode: `0x07`/`0x08` for SET, `0x87`/`0x88` for GET                     |
+| 1       | mode number (see below)                                                  |
+| 2       | speed wire value                                                         |
+| 3       | brightness                                                               |
+| 4       | low nibble = flags, high nibble = mode-specific option                   |
+| 5, 6, 7 | RGB, in that order                                                       |
+| 8       | Bit8 checksum slot on SET: `0xFF - (sum(bytes[0:8]) & 0xFF)` (reference) |
 
 Bytes 9..63 are zero padding. SET produces **no reply**. A GET request echoes the
 opcode in byte 0 and carries a Bit7 checksum at byte 7; the verified requests are
@@ -35,10 +35,10 @@ reply's byte 8 is **not** a checksum and must not be validated.
 
 Starting state (GET requests above, exact replies):
 
-| Light | GET reply | Decoded state |
-|---|---|---|
-| main | `87 05 02 04 07 ff 45 6e 00` | mode 5 (ripple), speed 2, brightness 4, flags 7, RGB `FF456E` |
-| side | `88 01 03 04 08 ff ff ff 00` | mode 1 (static), speed 3, brightness 4, flags 8, RGB `FFFFFF` |
+| Light | GET reply                    | Decoded state                                                 |
+| ----- | ---------------------------- | ------------------------------------------------------------- |
+| main  | `87 05 02 04 07 ff 45 6e 00` | mode 5 (ripple), speed 2, brightness 4, flags 7, RGB `FF456E` |
+| side  | `88 01 03 04 08 ff ff ff 00` | mode 1 (static), speed 3, brightness 4, flags 8, RGB `FFFFFF` |
 
 These were read back after every write and the original state was restored:
 
@@ -66,28 +66,28 @@ fixed and `7` as rainbow) is not.
 Wire mode numbers, reference (PROTOCOL.md); the listed names and semantics were
 not individually exercised on the MK750:
 
-| Mode | Effect |
-|---:|---|
-| 1 | static |
-| 2 | breathing |
-| 3 | spectrum |
-| 4 | wave |
-| 5 | ripple |
-| 6 | star dots |
-| 7 | flow |
-| 8 | key shadow |
-| 9 | layers |
-| 10 | sine |
-| 11 | spring |
-| 12 | neon |
-| 14 | radiant |
-| 15 | loop |
-| 16 | colour grid |
-| 17 | snowfall |
-| 18 | meteor |
-| 19 | silent snow |
-| 23 | train |
-| 24 | endless |
+| Mode | Effect      |
+| ---: | ----------- |
+|    1 | static      |
+|    2 | breathing   |
+|    3 | spectrum    |
+|    4 | wave        |
+|    5 | ripple      |
+|    6 | star dots   |
+|    7 | flow        |
+|    8 | key shadow  |
+|    9 | layers      |
+|   10 | sine        |
+|   11 | spring      |
+|   12 | neon        |
+|   14 | radiant     |
+|   15 | loop        |
+|   16 | colour grid |
+|   17 | snowfall    |
+|   18 | meteor      |
+|   19 | silent snow |
+|   23 | train       |
+|   24 | endless     |
 
 Modes 13, 20, 21, 22 and 25 need host-side data or a user picture: mode 13 selects
 a USERPIC pattern slot (reference; not tested on this unit). The exact subset a
@@ -99,11 +99,11 @@ every mode above.
 
 The low nibble of byte 4 is the flags field (reference; PROTOCOL.md):
 
-| Flags | Meaning |
-|---:|---|
-| 0..6 | preset colour: red, orange, yellow, green, cyan, blue, magenta (overrides RGB on GET) |
-| 7 | fixed custom colour |
-| 8 | rainbow on most boards |
+| Flags | Meaning                                                                               |
+| ----: | ------------------------------------------------------------------------------------- |
+|  0..6 | preset colour: red, orange, yellow, green, cyan, blue, magenta (overrides RGB on GET) |
+|     7 | fixed custom colour                                                                   |
+|     8 | rainbow on most boards                                                                |
 
 Some boards swap `7` and `8` (reference; not tested on this unit), so probe with
 a known RGB before relying on either. The high nibble of byte 4 is a
@@ -122,14 +122,14 @@ brightness 4 on both.
 `SET_SLEDPARAM 0x08` / `GET 0x88` use the identical byte layout and Bit8
 checksum, with these modes (reference; PROTOCOL.md):
 
-| Mode | Effect |
-|---:|---|
-| 0 | off |
-| 1 | static |
-| 2 | breathing |
-| 3 | neon (forces the rainbow nibble) |
-| 4 | wave |
-| 5 | snake |
+| Mode | Effect                           |
+| ---: | -------------------------------- |
+|    0 | off                              |
+|    1 | static                           |
+|    2 | breathing                        |
+|    3 | neon (forces the rainbow nibble) |
+|    4 | wave                             |
+|    5 | snake                            |
 
 Side-light speed is **not** inverted. A reply to `0x88` does not prove the board
 has edge LEDs (reference); the MK750 does, as its factory side-light state above

@@ -165,14 +165,14 @@ after verified restore. Neither is a device backup.
 
 ## Exclusions
 
-| Not implemented | Reason |
-|---|---|
-| Per-key colour / USERPIC | Reference forbids general use; stale GETs prevent reliable backup/verification |
-| OLED/screen content | No established geometry or safe path for this board |
-| 2.4 GHz receiver, battery | Untested here; wired USB is required |
-| Firmware update, bootloader, flash erase, factory reset | Destructive and outside a controller's scope |
-| Switch calibration | Can zero stored tables; not evidenced here |
-| Report-rate changes, generic raw commands | No verified safe path; raw commands bypass the allowlist |
+| Not implemented                                         | Reason                                                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Per-key colour / USERPIC                                | Reference forbids general use; stale GETs prevent reliable backup/verification |
+| OLED/screen content                                     | No established geometry or safe path for this board                            |
+| 2.4 GHz receiver, battery                               | Untested here; wired USB is required                                           |
+| Firmware update, bootloader, flash erase, factory reset | Destructive and outside a controller's scope                                   |
+| Switch calibration                                      | Can zero stored tables; not evidenced here                                     |
+| Report-rate changes, generic raw commands               | No verified safe path; raw commands bypass the allowlist                       |
 
 ## Accessibility and manual verification
 
